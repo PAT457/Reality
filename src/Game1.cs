@@ -190,24 +190,40 @@ namespace Reality
                 player.setBlockHolding(player.getBlockHolding() - 1);
             }
 
+            //Change Block By Numbers
+            if (Keyboard.GetState().IsKeyDown(Keys.D1))
+            {
+                player.setBlockHolding(1);
+            }
+
+            if (Keyboard.GetState().IsKeyDown(Keys.D2))
+            {
+                player.setBlockHolding(2);
+            }
+
+            if (Keyboard.GetState().IsKeyDown(Keys.D3))
+            {
+                player.setBlockHolding(3);
+            }
+
             //Up
-            if (Keyboard.GetState().IsKeyDown(Keys.W) && g)
+            if (Keyboard.GetState().IsKeyDown(Keys.W) && g && player.getY() !=  renderDistanceY)
             {
                 player.moveUp(world);
             }
             //Down
-            if (Keyboard.GetState().IsKeyDown(Keys.S) && g)
+            if (Keyboard.GetState().IsKeyDown(Keys.S) && g && player.getY() != 500 - renderDistanceY)
             {
                 player.moveDown(world);
             }
             //Left
-            if (Keyboard.GetState().IsKeyDown(Keys.A))
+            if (Keyboard.GetState().IsKeyDown(Keys.A) && player.getX() != renderDistanceX)
             {
                 player.moveLeft(world);
             }
 
             //Right
-            if (Keyboard.GetState().IsKeyDown(Keys.D))
+            if (Keyboard.GetState().IsKeyDown(Keys.D) && player.getX() != 500-renderDistanceX)
             {
                 player.moveRight(world);
             }
@@ -241,13 +257,12 @@ namespace Reality
             }
 
             //Gravity
-            if (gravity)
+            if (gravity && player.getY() != 500 - renderDistanceY)
             {
                 player.moveDown(world);
             }
 
             // TODO: Add your update logic here
-            score++;
             base.Update(gameTime);
         }
 
@@ -347,6 +362,17 @@ namespace Reality
             }*/
             //color = new Color(charlightLevel, charlightLevel, charlightLevel);
             spriteBatch.Draw(dirt.getTexture("0000"), new Rectangle(screenW / 28 / 2 * 28, screenH / 28 / 2 * 28, 28, 28), Color.White);
+            for (int i = 0; i < 3; i++)
+            {
+                if (player.getBlockHolding() == i + 1)
+                {
+                    spriteBatch.Draw(Block.getBlockByID(i + 1).getTexture("0000"), new Rectangle(i * 28 + 10, 10, 28, 28), Color.White);
+                }
+                else
+                {
+                    spriteBatch.Draw(Block.getBlockByID(i + 1).getTexture("0000"), new Rectangle(i * 28 + 10, 10, 28, 28), Color.White*0.2f);
+                }
+            }
             //spriteBatch.Draw(hHud, new Rectangle(0, 24, 241, 28), Color.White); disabled, work on later.
             spriteBatch.End();
             base.Draw(gameTime);

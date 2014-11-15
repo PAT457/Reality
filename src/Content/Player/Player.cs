@@ -126,7 +126,7 @@ namespace Reality.Content.Player
                 }
                 else
                 {
-                    setPos(getX(), getY(), getOffX(), getOffY() + speed);
+                    setPos(getX(), getY(), getOffX(), getOffY() + speed + 1);
                 }
             }
 

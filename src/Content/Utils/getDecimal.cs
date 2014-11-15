@@ -35,7 +35,6 @@ namespace Reality.Content.Utils
         {
             String fl = intf.ToString();
             fl = "0."+fl;
-            //Console.WriteLine("{0}", fl);
             return float.Parse(fl, CultureInfo.InvariantCulture.NumberFormat);
         }
     }
