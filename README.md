@@ -21,12 +21,13 @@ Please report any bugs and suggest some suggestions.
 Thanks, -Zambonie.
 
 Instructions to download and run the game for those who don't know:
-1. Hit the "Download ZIP" button on the right.
 
-2. After that's done, open it up. It is recommended for you to unzip the file, but the game actually works fine while it's zipped.
+1: Hit the "Download ZIP" button on the right.
 
-3. Open up Reality-Master, then go to src, and find "Reality.exe". It might be at the bottom.
+2: After that's done, open it up. It is recommended for you to unzip the file, but the game actually works fine while it's zipped.
 
-4. Double click on that and enjoy. If that doesn't work, go on to bin > Windows > Release > Reality.exe
+3: Open up Reality-Master, then go to src, and find "Reality.exe". It might be at the bottom.
+
+4: Double click on that and enjoy. If that doesn't work, go on to bin > Windows > Release > Reality.exe
 
 Note: This is as of now for Windows only, support for OSX will come soon.
