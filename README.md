@@ -1,6 +1,9 @@
 Reality
 =======
 
+Version: Build 3
+================
+
 (See how to run the download and run the game at the bottom.)
 
 Reality is a project mainly ran by Zambonie. Turtle5204, brang up the idea of making a game, and I accepted that. This game is written

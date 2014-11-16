@@ -115,11 +115,11 @@ namespace Reality.Content.Player
             }
             if (world.getBlockAt(getX(), (getY() + 1)) == 0)
             {
-                if (getOffY() > 27 - speed)
+                if (getOffY() > 27 - speed && getY() <= 500 - Game1.renderDistanceY)
                 {
                     int fixedpos = getOffY() + speed - 27;
                     setPos(getX(), getY() + 1, getOffX(), fixedpos);
-                    if (world.getBlockAt(getX(), getY() + 2) != 0 && getOffY() > 0)
+                    if (world.getBlockAt(getX(), getY() + 2) != 0 && getOffY() > 0)   //Check this later.
                     {
                         setPos(getX(), getY(), getOffX(), 0);
                     }
@@ -128,6 +128,12 @@ namespace Reality.Content.Player
                 {
                     setPos(getX(), getY(), getOffX(), getOffY() + speed + 1);
                 }
+            }
+
+            if (getY() >= 500 - Game1.renderDistanceY)
+            {
+                setPos(getX(), 500 - Game1.renderDistanceY, getOffX(), 0);
+                Game1.g = true;
             }
 
             else if (world.getBlockAt(getX(), getY() + 1) != 0 && getOffY() >= 0)
@@ -144,10 +150,10 @@ namespace Reality.Content.Player
 
         public void moveUp(WorldGen world)
         {
-            if (getY() <= Game1.renderDistanceY / 2)
-            {
+            //if (getY() <= Game1.renderDistanceY / 2)
+            //{
                 //Just do nothing. Why Do Anything?
-            }
+            //}
             if (world.getBlockAt(getX(), (getY() - 1)) == 0)
             {
                 if (getOffY() < speed)

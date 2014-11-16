@@ -171,7 +171,7 @@ namespace Reality
             lastWheelP = Mouse.GetState().ScrollWheelValue;
 
             //Change block
-            if (player.getBlockHolding() != 499 && wheelDirection == 1)
+            if (player.getBlockHolding() != 499 && wheelDirection == -1)
             {
                 Block[] blocks = Block.getBlocks();
                 if (blocks[player.getBlockHolding() + 1] != null)
@@ -185,7 +185,7 @@ namespace Reality
                 player.setBlockHolding(0);
             }
 
-            if (player.getBlockHolding() != 1 && wheelDirection == -1)
+            if (player.getBlockHolding() != 1 && wheelDirection == 1)
             {
                 player.setBlockHolding(player.getBlockHolding() - 1);
             }
@@ -229,7 +229,7 @@ namespace Reality
             }
 
             //Jump
-            if (Keyboard.GetState().IsKeyDown(Keys.Space) && g)
+            if (Keyboard.GetState().IsKeyDown(Keys.Space) && g && player.getY() > renderDistanceY+5)
             {
                 if (f == 0)
                 {
@@ -257,7 +257,7 @@ namespace Reality
             }
 
             //Gravity
-            if (gravity && player.getY() != 500 - renderDistanceY)
+            if (gravity)
             {
                 player.moveDown(world);
             }
