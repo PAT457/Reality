@@ -33,6 +33,10 @@ namespace Reality.Content.World
 
         public int getBlockAt(int x, int y)
         {
+            if (x >= width || x <= 0 || y >= height || y <= 0)
+            {
+                return 0;
+            }
             return world[y, x];
         }
 

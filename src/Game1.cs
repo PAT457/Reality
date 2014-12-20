@@ -12,6 +12,7 @@ using Reality.Content.Player;
 using Reality.Content.Block;
 using Reality.Content.Generation;
 using Reality.Content.Utils;
+using Reality.Content.Gui;
 #endregion
 
 namespace Reality
@@ -41,8 +42,16 @@ namespace Reality
         private int f = 0;
         private Texture2D bkg;
         private Texture2D invis;
-        private int score = 0;
-        private int speed = 6;
+        private bool drawGUI = true;
+        private Texture2D guiFrame;
+        private Texture2D guiSlot;
+        private bool lastRMact;
+        private bool lastLMact;
+        private guiTest gui = new guiTest();
+        private int clientHolding;
+        private int mousex;
+        private int mousey;
+
         private Texture2D hHud;
         public static bool g = false;
         public static bool gravity = true;
@@ -71,11 +80,12 @@ namespace Reality
             this.graphics.PreferredBackBufferWidth = screenW;
             this.graphics.PreferredBackBufferHeight = screenH;
             this.IsMouseVisible = true;
-            renderDistanceX = screenW / 28 + 1;
-            renderDistanceY = screenH / 28 + 1;
+            renderDistanceX = screenW / 24 + 1;
+            renderDistanceY = screenH / 24 + 1;
             this.graphics.ApplyChanges();
             //End Graphic Int.
             Block.supplyContent(this.Content);
+            //gui.supplyDrawingEngine(this.graphics, this.spriteBatch);
             base.Initialize();
         }
 
@@ -101,6 +111,8 @@ namespace Reality
             invis = Content.Load<Texture2D>("inv");
             font = Content.Load<SpriteFont>("tempFont");
             hHud = Content.Load<Texture2D>("healthhud");
+            guiFrame = Content.Load<Texture2D>("assets/GUIframe");
+            guiSlot = Content.Load<Texture2D>("assets/GUIslot");
         }
 
         /// <summary>
@@ -119,10 +131,17 @@ namespace Reality
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            //Exit out of GUI
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
+            {
+                drawGUI = false;
+            }
 
             //Controlls
+
+            //set the cursor pos's.
+            mousex = Mouse.GetState().X;
+            mousey = Mouse.GetState().Y;
 
             //Left Click
             if (Mouse.GetState().LeftButton == ButtonState.Pressed)
@@ -130,10 +149,38 @@ namespace Reality
                 int x = Mouse.GetState().X;
                 int y = Mouse.GetState().Y;
 
-                int wx = x / 28 + player.getX() - renderDistanceX / 2;
-                int wy = y / 28 + player.getY() - renderDistanceY / 2;
+                int wx = x / 24 + player.getX() - renderDistanceX / 2;
+                int wy = y / 24 + player.getY() - renderDistanceY / 2;
 
                 world.setBlock(wx, wy, 0);
+
+                //Place down block if GUI open.
+                if (drawGUI)
+                {
+                    for (int sp = 0; sp < gui.getSlotAmmount(); sp++)
+                    {
+                        Vector2 sposs = gui.getSlotPos(sp);
+                        int sx = (int)sposs.X;
+                        int sy = (int)sposs.Y;
+                        int beginx = Convert.ToInt32(sx) + (screenW / 2) - (guiFrame.Width * 4 / 2)+16;
+                        int beginy = Convert.ToInt32(sy) + (screenH / 2) - (guiFrame.Height * 4 / 2)+16;
+
+                        if (mousex >= beginx && mousey >= beginy && mousex <= beginx+(17*3) && mousey <= beginy+(17*3) && lastLMact == false)
+                        {
+                            if (gui.getItemIn(sp) == 0)
+                            {
+                                gui.setItemIn(sp, clientHolding);
+                            }
+
+                            else
+                            {
+                                gui.setItemIn(sp, 0);
+                            }
+                        }
+                    }
+                }
+
+                lastLMact = true;
             }
 
             //Right Click
@@ -142,12 +189,35 @@ namespace Reality
                 int x = Mouse.GetState().X;
                 int y = Mouse.GetState().Y;
 
-                int wx = x / 28 + player.getX() - renderDistanceX / 2;
-                int wy = y / 28 + player.getY() - renderDistanceY / 2;
+                int wx = x / 24 + player.getX() - renderDistanceX / 2;
+                int wy = y / 24 + player.getY() - renderDistanceY / 2;
+
+                if (world.getBlockAt(wx, wy) != 0 && lastRMact == false)
+                {
+                    drawGUI = true;
+                }
 
                 if (world.getBlockAt(wx, wy) == 0 && world.hasSurroundingBlock(wx, wy))
                 {
                     world.setBlock(wx, wy, player.getBlockHolding());
+                }
+
+                lastRMact = true;
+            }
+
+            if (lastRMact)
+            {
+                if (Mouse.GetState().RightButton != ButtonState.Pressed)
+                {
+                    lastRMact = false;
+                }
+            }
+
+            if (lastLMact)
+            {
+                if (Mouse.GetState().LeftButton != ButtonState.Pressed)
+                {
+                    lastLMact = false;
                 }
             }
 
@@ -245,6 +315,7 @@ namespace Reality
                 if (f < 15)
                 {
                     player.moveUp(world);
+                    //--player.setSpeed(player.getSpeed()-1);
                 }
                 f++;
             }
@@ -253,13 +324,22 @@ namespace Reality
             {
                 f = 0;
                 gravity = true;
-
+                player.setSpeed(6);
             }
 
             //Gravity
             if (gravity)
             {
                 player.moveDown(world);
+            }
+
+            //Set the client holding to the play holding. Change later to more custon thingys mijigs things.
+            clientHolding = player.getBlockHolding();
+
+            //update current GUI if any
+            if (drawGUI)
+            {
+                gui.updateGUI();
             }
 
             // TODO: Add your update logic here
@@ -275,7 +355,7 @@ namespace Reality
             GraphicsDevice.Clear(Color.Beige);
 
             // TODO: Add your drawing code here
-            spriteBatch.Begin();
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone);
             spriteBatch.Draw(bkg, new Rectangle(0, 0, screenW, screenH), Color.White); //Change it to fit the screen res, not just mine.
             int ry = player.getY() - renderDistanceY/2;
             int offx = player.getOffX();
@@ -322,7 +402,7 @@ namespace Reality
                     int blockID = world.getBlockAt(rx, ry);
                     if (blockID != 0)
                     {
-                        spriteBatch.Draw(Block.getBlockByID(blockID).getTexture(side), new Rectangle(x * 28 - offx, y * 28 - offy, 28, 28), Color.White);
+                        spriteBatch.Draw(Block.getBlockByID(blockID).getTexture(side), new Rectangle(x * 24 - offx, y * 24 - offy, 24, 24), Color.White);
                     }
                     rx++;
                 }
@@ -330,24 +410,27 @@ namespace Reality
             }
 
             //Draw Light
-            /*float col = 0f + (player.getY() * 4) * 0.0008f;
+           /* float col = 0f;
             Console.WriteLine("{0}", col);
-            for (int y = 0; y <= renderDistanceY; y++)
+            int rxl = player.getX() - renderDistanceX / 2;
+            int ryl = player.getY() - renderDistanceY / 2;
+            for (int x = 0; x <= renderDistanceX; x++)
             {
-                float colx = 0f + ((player.getY() + y) * 4) * 0.0008f;
-                for (int x = 0; x <= renderDistanceX; x++)
+                col = 0f;
+                for (int y = 0; y <= renderDistanceY; y++)
                 {
-                    col = colx;
-                    for (int iy = 0; iy < 4; iy++)
+                    for (int iy = 0; iy < 3; iy++)
                     {
-                        col = col + 0.0008f;
-                        for (int ix = 0; ix < 4; ix++)
+                        if (col < 0.4f && world.getBlockAt(rxl, ryl) != 0)
                         {
-                            spriteBatch.Draw(invis, new Rectangle(x * 28 - offx + (ix * 7), y * 28 - offy + (iy * 7), 7, 7), Color.Black * col);
+                            col = col + 0.1f;
                         }
+                        spriteBatch.Draw(invis, new Rectangle(x * 24 - offx, y * 24 - offy + (iy * 8), 24, 8), Color.Black*col);
                     }
+                    ryl++;
                 }
-            }*/
+                rxl++;
+            }
           
 
             //spriteBatch.DrawString(font, "Player Pos: X: "+player.getX()+"."+player.getOffX()+"     Y: "+player.getY()+"."+player.getOffY(), new Vector2(5, 5), Color.White);
@@ -361,19 +444,37 @@ namespace Reality
                 }
             }*/
             //color = new Color(charlightLevel, charlightLevel, charlightLevel);
-            spriteBatch.Draw(dirt.getTexture("0000"), new Rectangle(screenW / 28 / 2 * 28, screenH / 28 / 2 * 28, 28, 28), Color.White);
+            spriteBatch.Draw(dirt.getTexture("0000"), new Rectangle(screenW / 24 / 2 * 24, screenH / 24 / 2 * 24, 24, 24), Color.White);
             for (int i = 0; i < 3; i++)
             {
                 if (player.getBlockHolding() == i + 1)
                 {
-                    spriteBatch.Draw(Block.getBlockByID(i + 1).getTexture("0000"), new Rectangle(i * 28 + 10, 10, 28, 28), Color.White);
+                    spriteBatch.Draw(Block.getBlockByID(i + 1).getTexture("0000"), new Rectangle(i * 24 + 10, 10, 24, 24), Color.White);
                 }
                 else
                 {
-                    spriteBatch.Draw(Block.getBlockByID(i + 1).getTexture("0000"), new Rectangle(i * 28 + 10, 10, 28, 28), Color.White*0.2f);
+                    spriteBatch.Draw(Block.getBlockByID(i + 1).getTexture("0000"), new Rectangle(i * 24 + 10, 10, 24, 24), Color.White*0.2f);
                 }
             }
-            //spriteBatch.Draw(hHud, new Rectangle(0, 24, 241, 28), Color.White); disabled, work on later.
+
+            //draw GUI if on
+            if (drawGUI == true)
+            {
+                spriteBatch.Draw(guiFrame, new Rectangle((screenW/2)-(guiFrame.Width*4/2), (screenH/2)-(guiFrame.Height*4/2), 368, 288), Color.White);
+                for (int si = 0; si < gui.getSlotAmmount(); si++)
+                {
+                    Vector2 spos = gui.getSlotPos(si);
+                    spriteBatch.Draw(guiSlot, new Rectangle(Convert.ToInt32(spos.X) + (screenW / 2) - (guiFrame.Width * 4 / 2)+16, Convert.ToInt32(spos.Y)+(screenH/2)-(guiFrame.Height*4/2)+16, 17 * 3, 17 * 3), Color.White);
+                    if (gui.getItemIn(si) != 0)
+                    {
+                        spriteBatch.Draw(Block.getBlockByID(gui.getItemIn(si)).getTexture("1111"), new Rectangle(Convert.ToInt32(spos.X) + (screenW / 2) - (guiFrame.Width * 4 / 2) + 29, Convert.ToInt32(spos.Y) + (screenH / 2) - (guiFrame.Height * 4 / 2) + 29, 24, 24), Color.White);
+                    }
+                }
+
+                //Draw holding block.
+                spriteBatch.Draw(Block.getBlockByID(clientHolding).getTexture("0000"), new Rectangle(mousex, mousey, 24, 24), Color.White);
+            }
+            //spriteBatch.Draw(hHud, new Rectangle(0, 24, 241, 24), Color.White); disabled, work on later.
             spriteBatch.End();
             base.Draw(gameTime);
         }

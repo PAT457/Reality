@@ -4,7 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 
-//As Of 3 Hours Of Working On A System that needed this function, It failed. I'm leaving this here for futrue use, or Maybe, I dont know.
+//As Of 3 Hours Of Working On A System that needed this function, It failed. I'm leaving this here for future use, or Maybe, I dont know.
 
 namespace Reality.Content.Utils
 {

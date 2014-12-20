@@ -37,6 +37,9 @@
   <ItemGroup>
     <Compile Include="Content\Block\Block.cs" />
     <Compile Include="Content\Generation\Generation.cs" />
+    <Compile Include="Content\Gui\gui.cs" />
+    <Compile Include="Content\Gui\guiSlot.cs" />
+    <Compile Include="Content\Gui\guiTest.cs" />
     <Compile Include="Content\Player\Player.cs" />
     <Compile Include="Content\Utils\getDecimal.cs" />
     <Compile Include="Content\Utils\trim.cs" />

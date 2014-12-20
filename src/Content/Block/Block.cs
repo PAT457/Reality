@@ -29,7 +29,8 @@ namespace Reality.Content.Block
             textures = new Texture2D[sides.Length];
             for (int f = 0;  f < sides.Length; f++)
             {
-                textures[f] = Content.Load<Texture2D>("Blocks/"+basename+"."+sides[f]);
+                //textures[f] = Content.Load<Texture2D>("Blocks/"+basename+"."+sides[f]);
+                textures[f] = Content.Load<Texture2D>("Blocks/" + basename + "." + "1111");
             }
         }
 
