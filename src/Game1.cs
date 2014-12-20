@@ -149,7 +149,7 @@ namespace Reality
                 int x = Mouse.GetState().X;
                 int y = Mouse.GetState().Y;
 
-                int wx = x / 24 + player.getX() - renderDistanceX / 2;
+                int wx = (x / 24 + player.getX() - renderDistanceX / 2) + 1;
                 int wy = y / 24 + player.getY() - renderDistanceY / 2;
 
                 world.setBlock(wx, wy, 0);
@@ -189,7 +189,7 @@ namespace Reality
                 int x = Mouse.GetState().X;
                 int y = Mouse.GetState().Y;
 
-                int wx = x / 24 + player.getX() - renderDistanceX / 2;
+                int wx = (x / 24 + player.getX() - renderDistanceX / 2) + 1;
                 int wy = y / 24 + player.getY() - renderDistanceY / 2;
 
                 if (world.getBlockAt(wx, wy) != 0 && lastRMact == false)
@@ -402,7 +402,7 @@ namespace Reality
                     int blockID = world.getBlockAt(rx, ry);
                     if (blockID != 0)
                     {
-                        spriteBatch.Draw(Block.getBlockByID(blockID).getTexture(side), new Rectangle(x * 24 - offx, y * 24 - offy, 24, 24), Color.White);
+                        spriteBatch.Draw(Block.getBlockByID(blockID).getTexture(side), new Rectangle((x - 1) * 24 - offx, y * 24 - offy, 24, 24), Color.White);
                     }
                     rx++;
                 }
