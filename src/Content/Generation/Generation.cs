@@ -65,6 +65,13 @@ namespace Reality.Content.Generation
                     }
                 }
             }
+
+            int[,] bg = new int[500,500];
+
+            Array.Copy(world.getWorld(), bg, world.getWorld().Length);
+
+            world.setBg(bg);
+
             return world;
         }
     }

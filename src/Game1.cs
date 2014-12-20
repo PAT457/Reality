@@ -35,7 +35,7 @@ namespace Reality
         public static int renderDistanceY;
         public static int wheelDirection = 0;
         private int lastWheelP = 0;
-        private Color color;
+        //private Color color;
         private Block grass;
         private Block dirt;
         private Block stone;
@@ -400,6 +400,13 @@ namespace Reality
                     }
 
                     int blockID = world.getBlockAt(rx, ry);
+                    int bgID = world.getBgAt(rx, ry);
+
+                    if (bgID != 0)
+                    {
+                        spriteBatch.Draw(Block.getBlockByID(bgID).getTexture(side), new Rectangle((x - 1) * 24 - offx, y * 24 - offy, 24, 24), Color.Gray);
+                    }
+
                     if (blockID != 0)
                     {
                         spriteBatch.Draw(Block.getBlockByID(blockID).getTexture(side), new Rectangle((x - 1) * 24 - offx, y * 24 - offy, 24, 24), Color.White);

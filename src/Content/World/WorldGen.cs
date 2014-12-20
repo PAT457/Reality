@@ -8,6 +8,7 @@ namespace Reality.Content.World
     class WorldGen
     {
         private int[,] world;
+        private int[,] bg;
         private int width;
         private int height;
 
@@ -17,11 +18,13 @@ namespace Reality.Content.World
             width = w;
             height = h;
             world = new int[height, width];
+            bg = new int[height, width];
             for (int y = 0; y < height; y++)
             {
                 for (int x = 0; x < width; x++)
                 {
                     world[y, x] = 0;
+                    bg[y, x] = 0;
                 }
             }
         }
@@ -31,6 +34,16 @@ namespace Reality.Content.World
             return world;
         }
 
+        public int[,] getBg()
+        {
+            return bg;
+        }
+
+        public void setBg(int[,] i)
+        {
+            bg = i;
+        }
+
         public int getBlockAt(int x, int y)
         {
             if (x >= width || x <= 0 || y >= height || y <= 0)
@@ -38,6 +51,15 @@ namespace Reality.Content.World
                 return 0;
             }
             return world[y, x];
+        }
+
+        public int getBgAt(int x, int y)
+        {
+            if (x >= width || x <= 0 || y >= height || y <= 0)
+            {
+                return 0;
+            }
+            return bg[y, x];
         }
 
         public int getWidth()
@@ -62,6 +84,18 @@ namespace Reality.Content.World
             return true;
         }
 
+        public bool setBg(int x, int y, int Id)
+        {
+            if (x >= width || x <= 0 || y >= height || y <= 0)  //Cheks if the block placment is out of bounds.
+            {
+                Console.WriteLine("[Reality][Notice] Tried To Place A Background Block Out Of Bounds Of The World, Discarded.");
+                return false;
+            }
+            //Console.WriteLine("Debug: {0}  {1}", x, y);
+            bg[y, x] = Id;
+            return true;
+        }
+
         /// <summary>
         /// Gets if there is a block other then air around it.
         /// </summary>
@@ -83,6 +117,28 @@ namespace Reality.Content.World
                 return true;
             }
             if (getBlockAt(x, y + 1) != 0)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool hasSurroundingBg(int x, int y)
+        {
+            if (getBgAt(x - 1, y) != 0)
+            {
+                return true;
+            }
+            if (getBgAt(x + 1, y) != 0)
+            {
+                return true;
+            }
+            if (getBgAt(x, y - 1) != 0)
+            {
+                return true;
+            }
+            if (getBgAt(x, y + 1) != 0)
             {
                 return true;
             }
