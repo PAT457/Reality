@@ -368,13 +368,15 @@ namespace Reality
             spriteBatch.Draw(bkg, new Rectangle(0, 0, screenW, screenH), Color.White); //Change it to fit the screen res, not just mine.
 
             int ry = player.getY() - renderDistanceY/2;
-            int rx = player.getX() - renderDistanceX/2;
+            int rx = player.getX() - renderDistanceX / 2;
 
             int offx = player.getOffX();
             int offy = player.getOffY();
 
             for (int y = 0; y <= renderDistanceY; y++)
             {
+                rx = player.getX() - renderDistanceX / 2;
+
                 for (int x = 0; x <= renderDistanceX; x++)
                 {
                     String side = "";
@@ -429,18 +431,21 @@ namespace Reality
             }
 
             //Lighting code
-            for (int y = 0; y < screenH / 2; y++)
+            for (int y1 = 0; y1 < screenH / 2; y1++)
             {
-                for (int x = 0; x < screenW / 2; x++)
+                for (int x1 = 0; x1 < screenW / 2; x1++)
                 {
-                    int x2 = (x / 24 + player.getX() - renderDistanceX / 2) + 1;
-                    int y2 = y / 24 + player.getY() - renderDistanceY / 2;
+                    int x2 = (x1 / 24 + player.getX() - renderDistanceX / 2) + 1;
+                    int y2 = y1 / 24 + player.getY() - renderDistanceY / 2;
 
-                    light[x, y] = 0;
+                    x2 -= offx;
+                    y2 -= offy;
+
+                    light[x1, y1] = 0;
 
                     if (world.getBlockAt(x2, y2) == 0 && world.getBgAt(x2, y2) == 0)
                     {
-                        light[x, y] = 1.0f;
+                        light[x1, y1] = 1.0f;
                     }
                 }
             }
