@@ -52,12 +52,16 @@ namespace Reality
         private int mousex;
         private int mousey;
 
+        Texture2D heart;
+
         private Texture2D hHud;
         public static bool g = false;
         public static bool gravity = true;
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         SpriteFont font;
+
+        float[,] light;
 
         public Game1()
             : base()
@@ -86,6 +90,9 @@ namespace Reality
             //End Graphic Int.
             Block.supplyContent(this.Content);
             //gui.supplyDrawingEngine(this.graphics, this.spriteBatch);
+
+            light = new float[screenW/2, screenH/2];
+
             base.Initialize();
         }
 
@@ -113,6 +120,8 @@ namespace Reality
             hHud = Content.Load<Texture2D>("healthhud");
             guiFrame = Content.Load<Texture2D>("assets/GUIframe");
             guiSlot = Content.Load<Texture2D>("assets/GUIslot");
+
+            heart = Content.Load<Texture2D>("heart");
         }
 
         /// <summary>
@@ -357,12 +366,15 @@ namespace Reality
             // TODO: Add your drawing code here
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone);
             spriteBatch.Draw(bkg, new Rectangle(0, 0, screenW, screenH), Color.White); //Change it to fit the screen res, not just mine.
+
             int ry = player.getY() - renderDistanceY/2;
+            int rx = player.getX() - renderDistanceX/2;
+
             int offx = player.getOffX();
             int offy = player.getOffY();
+
             for (int y = 0; y <= renderDistanceY; y++)
             {
-                int rx = player.getX() - renderDistanceX/2;
                 for (int x = 0; x <= renderDistanceX; x++)
                 {
                     String side = "";
@@ -414,6 +426,61 @@ namespace Reality
                     rx++;
                 }
                 ry++;
+            }
+
+            //Lighting code
+            for (int y = 0; y < screenH / 2; y++)
+            {
+                for (int x = 0; x < screenW / 2; x++)
+                {
+                    int x2 = (x / 24 + player.getX() - renderDistanceX / 2) + 1;
+                    int y2 = y / 24 + player.getY() - renderDistanceY / 2;
+
+                    light[x, y] = 0;
+
+                    if (world.getBlockAt(x2, y2) == 0 && world.getBgAt(x2, y2) == 0)
+                    {
+                        light[x, y] = 1.0f;
+                    }
+                }
+            }
+
+            for (int y = 0; y < screenH/2; y++)
+            {
+                for (int x = 0; x < screenW/2; x++)
+                {
+                    int x2 = (x / 24 + player.getX() - renderDistanceX / 2) + 1;
+                    int y2 = y / 24 + player.getY() - renderDistanceY / 2;
+
+                    float level = 0f;
+
+                    if (x > 0 && x < (screenW / 2) - 1 && y > 0 && y < (screenH / 2) - 1)
+                    {
+                        if (light[x + 1, y] > level) level = light[x + 1, y] - 0.025f;
+                        if (light[x - 1, y] > level) level = light[x - 1, y] - 0.025f;
+                        if (light[x, y + 1] > level) level = light[x, y + 1] - 0.025f;
+                        if (light[x, y - 1] > level) level = light[x, y - 1] - 0.025f;
+                    }
+
+                    if(level <= 0)
+                    {
+                        level = 0f;
+                    }
+
+                    if(level >= 1)
+                    {
+                        level = 1f;
+                    }
+
+                    if (world.getBlockAt(x2, y2) == 0 && world.getBgAt(x2, y2) == 0)
+                    {
+                        level = 1.0f;
+                    }
+
+                    light[x, y] = level;
+                    
+                    spriteBatch.Draw(invis, new Rectangle(x * 2, y * 2, 2, 2), new Color(0f, 0f, 0f, 1 - level));
+                }
             }
 
             //Draw Light
@@ -481,6 +548,13 @@ namespace Reality
                 //Draw holding block.
                 spriteBatch.Draw(Block.getBlockByID(clientHolding).getTexture("0000"), new Rectangle(mousex, mousey, 24, 24), Color.White);
             }
+
+            //Draw hearts
+            for (int k = 0; k < (player.getHealth() / player.getMaxHealth()) * 10; k++)
+            {
+                spriteBatch.Draw(heart, new Rectangle(screenW - ((k+1)*16), 4, 12, 12), Color.White);
+            }
+
             //spriteBatch.Draw(hHud, new Rectangle(0, 24, 241, 24), Color.White); disabled, work on later.
             spriteBatch.End();
             base.Draw(gameTime);
