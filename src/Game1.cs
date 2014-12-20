@@ -431,6 +431,7 @@ namespace Reality
             }
 
             //Lighting code
+            /*
             for (int y1 = 0; y1 < screenH / 2; y1++)
             {
                 for (int x1 = 0; x1 < screenW / 2; x1++)
@@ -487,6 +488,7 @@ namespace Reality
                     spriteBatch.Draw(invis, new Rectangle(x * 2, y * 2, 2, 2), new Color(0f, 0f, 0f, 1 - level));
                 }
             }
+             * */
 
             //Draw Light
            /* float col = 0f;
@@ -557,7 +559,7 @@ namespace Reality
             //Draw hearts
             for (int k = 0; k < (player.getHealth() / player.getMaxHealth()) * 10; k++)
             {
-                spriteBatch.Draw(heart, new Rectangle(screenW - ((k+1)*16), 4, 12, 12), Color.White);
+                //spriteBatch.Draw(heart, new Rectangle(screenW - ((k+1)*16), 4, 12, 12), Color.White);
             }
 
             //spriteBatch.Draw(hHud, new Rectangle(0, 24, 241, 24), Color.White); disabled, work on later.
