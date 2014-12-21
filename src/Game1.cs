@@ -318,6 +318,18 @@ namespace Reality
                 }
             }
 
+            if (Keyboard.GetState().IsKeyDown(Keys.Tab))
+            {
+                for (int y = 0; y < world.getHeight(); y++)
+                {
+                    for (int x = 0; x < world.getWidth(); x++)
+                    {
+                        world.setLight(x, y, 0);
+                    }
+                }
+                PropogateLight(1.0f, player.getX(), player.getY(), true);
+            }
+
             //Keep Jumping
             if (f != 0 && f < 20)
             {
@@ -350,6 +362,16 @@ namespace Reality
             {
                 gui.updateGUI();
             }
+
+            for (int y = 0; y < world.getHeight(); y++)
+            {
+                for (int x = 0; x < world.getWidth(); x++)
+                {
+                    world.setLight(x, y, 0);
+                }
+            }
+
+            PropogateLight(1.0f, player.getX(), player.getY(), true);
 
             // TODO: Add your update logic here
             base.Update(gameTime);
@@ -418,12 +440,15 @@ namespace Reality
 
                     if (bgID != 0)
                     {
-                        spriteBatch.Draw(Block.getBlockByID(bgID).getTexture(side), new Rectangle((x - 1) * 24 - offx, y * 24 - offy, 24, 24), Color.Gray);
+                        float level = world.getLightAt(rx, ry);
+                        level -= 0.5f;
+                        spriteBatch.Draw(Block.getBlockByID(bgID).getTexture(side), new Rectangle((x - 1) * 24 - offx, y * 24 - offy, 24, 24), new Color(level, level, level));
                     }
 
                     if (blockID != 0)
                     {
-                        spriteBatch.Draw(Block.getBlockByID(blockID).getTexture(side), new Rectangle((x - 1) * 24 - offx, y * 24 - offy, 24, 24), Color.White);
+                        float level2 = world.getLightAt(rx, ry);
+                        spriteBatch.Draw(Block.getBlockByID(blockID).getTexture(side), new Rectangle((x - 1) * 24 - offx, y * 24 - offy, 24, 24), new Color(level2, level2, level2));
                     }
                     rx++;
                 }
@@ -565,6 +590,44 @@ namespace Reality
             //spriteBatch.Draw(hHud, new Rectangle(0, 24, 241, 24), Color.White); disabled, work on later.
             spriteBatch.End();
             base.Draw(gameTime);
+        }
+
+        public void PropogateLight(float sourceLight, int toX, int toY, bool init)
+        {
+            int ry = player.getY() - renderDistanceY;
+            int rx = player.getX() - renderDistanceX;
+
+            int ry2 = player.getY() + renderDistanceY;
+            int rx2 = player.getX() + renderDistanceX;
+
+            if ((toX >= rx2 || toY >= ry2 || toX < rx || toY < ry) && !init) return;
+
+            if (toX >= world.getWidth() || toY >= world.getHeight() || toX < 0 || toY < 0) return;
+
+            if (world.getLightAt(toX, toY) >= sourceLight) return;
+
+            float newLight;
+
+            if(world.getBlockAt(toX, toY) == 0 && world.getBgAt(toX, toY) != 0)
+                newLight = sourceLight - 0.1f;
+            else
+                newLight = sourceLight - 0.25f;
+
+            if (world.getBlockAt(toX, toY) == 0 && world.getBgAt(toX, toY) == 0) { newLight = 1; }
+            //if (world.getBlockAt(toX, toY) == 4) { newLight = 2; }
+
+            if (newLight < 0)
+            {
+                world.setLight(toX, toY, 0);
+                return;
+            }
+
+            world.setLight(toX, toY, newLight);
+
+            PropogateLight(newLight, toX + 1, toY, false);
+            PropogateLight(newLight, toX - 1, toY, false);
+            PropogateLight(newLight, toX, toY + 1, false);
+            PropogateLight(newLight, toX, toY - 1, false);
         }
     }
 }

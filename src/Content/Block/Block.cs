@@ -84,6 +84,11 @@ namespace Reality.Content.Block
             return null;
         }
 
+        public void doTick()
+        {
+
+        }
+
 
         public static Block[] getBlocks()
         {
