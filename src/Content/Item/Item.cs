@@ -86,7 +86,7 @@ namespace Reality.Content.Item
 
         }
 
-        public Texture2D getItemTexture()
+        public Texture2D getTexture()
         {
             return texture;
         }

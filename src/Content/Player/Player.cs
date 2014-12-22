@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using Reality.Content.Item;
 
 namespace Reality.Content.Player
 {
@@ -19,6 +20,9 @@ namespace Reality.Content.Player
         private int maxHealth;
         private int block;
 
+        private ItemStack[,] inventory;
+        private int selectedSlot;
+
         public Player(int px, int py, int mHealth)
         {
             x = px;
@@ -29,8 +33,64 @@ namespace Reality.Content.Player
             health = 0;
             speed = 6;
             block = 1;
+
+            inventory = new ItemStack[10, 4];
+            selectedSlot = 1;
         }
 
+        //Inventory
+        public ItemStack[,] getInventory() { return inventory; }
+
+        public void setInventory(ItemStack[,] inv) { inventory = inv; }
+
+        public ItemStack getItem(int x, int y)
+        {
+            if (x < 0 || x >= 10 || y < 0 || y >= 4) return null;
+
+            return inventory[x, y];
+        }
+
+        public void setItem(int x, int y, ItemStack s)
+        {
+            if (x < 0 || x >= 10 || y < 0 || y >= 4) return;
+
+            inventory[x, y] = s;
+        }
+
+        public int getSelectedSlot()
+        {
+            return selectedSlot;
+        }
+
+        public void slotUp()
+        {
+            selectedSlot++;
+
+            if (selectedSlot > 10) selectedSlot = 1;
+            if (selectedSlot < 0) selectedSlot = 10;
+        }
+
+        public void slotDown()
+        {
+            selectedSlot--;
+
+            if (selectedSlot > 10) selectedSlot = 1;
+            if (selectedSlot < 0) selectedSlot = 10;
+        }
+
+        public void setSlot(int i)
+        {
+            selectedSlot = i;
+            if (selectedSlot > 10) selectedSlot = 1;
+            if (selectedSlot < 0) selectedSlot = 10;
+        }
+
+        public ItemStack getSelectedStack()
+        {
+            return inventory[selectedSlot - 1, 0];
+        }
+
+        //Variables
         public int getX()
         {
             return x;

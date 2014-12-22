@@ -9,8 +9,10 @@ namespace Reality.Content.Item
     class ItemStack
     {
         private Item item;
+        private Block.Block block;
         private int total;
         private int maxStack;
+        private bool type;
 
         public ItemStack(Item itemObj, int totalStack)
         {
@@ -21,6 +23,19 @@ namespace Reality.Content.Item
             }
             item = itemObj;
             total = totalStack;
+            type = false;
+        }
+
+        public ItemStack(Block.Block blockObj, int totalStack)
+        {
+            maxStack = blockObj.getMaxStack();
+            if (totalStack < maxStack)
+            {
+                totalStack = maxStack;
+            }
+            block = blockObj;
+            total = totalStack;
+            type = true;
         }
 
         public Item getItem()
@@ -28,7 +43,24 @@ namespace Reality.Content.Item
             return item;
         }
 
-        public int getMaxAmount() {
+        public Block.Block getBlock()
+        {
+            return block;
+        }
+
+        public Object getObject()
+        {
+            if (type) return block;
+            else return item;
+        }
+
+        public bool getType()
+        {
+            return type;
+        }
+
+        public int getMaxAmount()
+        {
             return maxStack;
         }
 
@@ -41,6 +73,14 @@ namespace Reality.Content.Item
         {
             item = newItem;
             maxStack = newItem.getMaxStack();
+            type = false;
+        }
+
+        public void changeBlock(Block.Block newBlock)
+        {
+            block = newBlock;
+            maxStack = newBlock.getMaxStack();
+            type = true;
         }
 
         public void changeTotal(int newTotal)

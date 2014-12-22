@@ -19,16 +19,18 @@ namespace Reality.Content.Block
         private String name;
         private static ContentManager Content;
         private static Boolean allowEdit = true;
+        private int stackLimit;
 
         public static String[] sidesAll = new String[16] { "0000", "0001", "0010", "0011", "0100", "0101", "0110", "0111", "1000", "1001", "1010", "1011", "1100", "1101", "1110", "1111" };
 
-        public Block(int BlockId, String InGameName, String[] TextureSides, String TextureBaseName)
+        public Block(int BlockId, String InGameName, String[] TextureSides, String TextureBaseName, int MaxStack)
         {
             id = BlockId;
             name = InGameName;
             sides = TextureSides;
             basename = TextureBaseName;
             textures = new Texture2D[sides.Length];
+            stackLimit = MaxStack;
             for (int f = 0;  f < sides.Length; f++)
             {
                 textures[f] = Content.Load<Texture2D>("Blocks/"+basename+"."+"1111");
@@ -84,9 +86,14 @@ namespace Reality.Content.Block
             return null;
         }
 
-        public void doTick()
+        public Texture2D getTexture()
         {
+            return textures[15];
+        }
 
+        public int getMaxStack()
+        {
+            return stackLimit;
         }
 
 

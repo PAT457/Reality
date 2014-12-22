@@ -13,6 +13,7 @@ using Reality.Content.Block;
 using Reality.Content.Generation;
 using Reality.Content.Utils;
 using Reality.Content.Gui;
+using Reality.Content.Item;
 #endregion
 
 namespace Reality
@@ -107,9 +108,9 @@ namespace Reality
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
-            grass = new Block(1, "Grass", Block.sidesAll, "grass");
-            dirt = new Block(2, "Dirt", Block.sidesAll, "dirt");
-            stone = new Block(3, "Stone", Block.sidesAll, "stone");
+            grass = new Block(1, "Grass", Block.sidesAll, "grass", 100);
+            dirt = new Block(2, "Dirt", Block.sidesAll, "dirt", 100);
+            stone = new Block(3, "Stone", Block.sidesAll, "stone", 100);
 
             Block.registerBlock(grass);
             Block.registerBlock(dirt);
@@ -123,6 +124,10 @@ namespace Reality
             guiSlot = Content.Load<Texture2D>("assets/GUIslot");
 
             //heart = Content.Load<Texture2D>("heart");
+
+            player.setItem(0, 0, new ItemStack(Block.getBlockByID(1), 100));
+            player.setItem(1, 0, new ItemStack(Block.getBlockByID(2), 100));
+            player.setItem(2, 0, new ItemStack(Block.getBlockByID(3), 100));
 
             //Init GUIs (TEMP)
             gui.init();
@@ -212,7 +217,10 @@ namespace Reality
 
                 if (world.getBlockAt(wx, wy) == 0 && world.hasSurroundingBlock(wx, wy))
                 {
-                    world.setBlock(wx, wy, player.getBlockHolding());
+                    if (player.getSelectedStack() != null && player.getSelectedStack().getType())
+                    {
+                        world.setBlock(wx, wy, player.getSelectedStack().getBlock().getID());
+                    }
                 }
 
                 lastRMact = true;
@@ -254,39 +262,23 @@ namespace Reality
             lastWheelP = Mouse.GetState().ScrollWheelValue;
 
             //Change block
-            if (player.getBlockHolding() != 499 && wheelDirection == -1)
-            {
-                Block[] blocks = Block.getBlocks();
-                if (blocks[player.getBlockHolding() + 1] != null)
-                {
-                    player.setBlockHolding(player.getBlockHolding() + 1);
-                }
-            }
-
-            if (player.getBlockHolding() == 499 && wheelDirection == 1)
-            {
-                player.setBlockHolding(0);
-            }
-
-            if (player.getBlockHolding() != 1 && wheelDirection == 1)
-            {
-                player.setBlockHolding(player.getBlockHolding() - 1);
-            }
+            if (wheelDirection == 1) player.slotDown();
+            else if(wheelDirection == -1) player.slotUp();
 
             //Change Block By Numbers
             if (Keyboard.GetState().IsKeyDown(Keys.D1))
             {
-                player.setBlockHolding(1);
+                player.setSlot(1);
             }
 
             if (Keyboard.GetState().IsKeyDown(Keys.D2))
             {
-                player.setBlockHolding(2);
+                player.setSlot(2);
             }
 
             if (Keyboard.GetState().IsKeyDown(Keys.D3))
             {
-                player.setBlockHolding(3);
+                player.setSlot(3);
             }
 
             //Up
@@ -554,7 +546,9 @@ namespace Reality
                 }
             }*/
             //color = new Color(charlightLevel, charlightLevel, charlightLevel);
-            spriteBatch.Draw(dirt.getTexture("0000"), new Rectangle(screenW / 24 / 2 * 24, screenH / 24 / 2 * 24, 24, 24), Color.White);
+            spriteBatch.Draw(dirt.getTexture("0000"), new Rectangle(screenW / 24 / 2 * 24, screenH / 24 / 2 * 24, 24, 24), Color.White); // Player
+
+            /* Old Hotbar Code
             for (int i = 0; i < 3; i++)
             {
                 if (player.getBlockHolding() == i + 1)
@@ -566,32 +560,57 @@ namespace Reality
                     spriteBatch.Draw(Block.getBlockByID(i + 1).getTexture("0000"), new Rectangle(i * 24 + 10, 10, 24, 24), Color.White*0.2f);
                 }
             }
+             */
 
-            //draw GUI if on
-            if (drawGUI == true)
+            ItemStack[,] inv = player.getInventory();
+            int sel = player.getSelectedSlot() - 1;
+
+            for (int p = 0; p < 10; p++)
             {
-                spriteBatch.Draw(guiFrame, new Rectangle((screenW/2)-(guiFrame.Width*4/2), (screenH/2)-(guiFrame.Height*4/2), 368, 288), Color.White);
-                //draw slots
-                for (int si = 0; si < gui.getSlotAmmount(); si++)
+                if (inv[p, 0] != null)
                 {
-                    Vector2 spos = gui.getSlotPos(si);
-                    spriteBatch.Draw(guiSlot, new Rectangle(Convert.ToInt32(spos.X) + (screenW / 2) - (guiFrame.Width * 4 / 2)+16, Convert.ToInt32(spos.Y)+(screenH/2)-(guiFrame.Height*4/2)+16, 17 * 3, 17 * 3), Color.White);
-                    if (gui.getItemIn(si) != 0)
+                    bool b = inv[p, 0].getType();
+                    Texture2D t;
+
+                    if (b) t = inv[p, 0].getBlock().getTexture();
+                    else t = inv[p, 0].getItem().getTexture();
+
+                    if (p == sel)
                     {
-                        spriteBatch.Draw(Block.getBlockByID(gui.getItemIn(si)).getTexture("1111"), new Rectangle(Convert.ToInt32(spos.X) + (screenW / 2) - (guiFrame.Width * 4 / 2) + 29, Convert.ToInt32(spos.Y) + (screenH / 2) - (guiFrame.Height * 4 / 2) + 29, 24, 24), Color.White);
+                        spriteBatch.Draw(t, new Rectangle(p * 24 + (5*(p+1)), 5, 24, 24), Color.White);
+                    }
+                    else
+                    {
+                        spriteBatch.Draw(t, new Rectangle(p * 24 + (5*(p+1)), 5, 24, 24), Color.White * 0.2f);
                     }
                 }
-
-                //draw images
-                for (int si = 0; si < gui.getImageAmmount(); si++)
-                {
-                    Vector2 spos = gui.getImagePos(si);
-                    spriteBatch.Draw(gui.getImageIn(si), new Rectangle(Convert.ToInt32(spos.X) + (screenW / 2) - (guiFrame.Width * 4 / 2) + 16, Convert.ToInt32(spos.Y) + (screenH / 2) - (guiFrame.Height * 4 / 2) + 16, gui.getImageIn(si).Width, gui.getImageIn(si).Height), Color.White);
-                }
-
-                //Draw holding block.
-                spriteBatch.Draw(Block.getBlockByID(clientHolding).getTexture("0000"), new Rectangle(mousex, mousey, 24, 24), Color.White);
             }
+
+                //draw GUI if on
+                if (drawGUI == true)
+                {
+                    spriteBatch.Draw(guiFrame, new Rectangle((screenW / 2) - (guiFrame.Width * 4 / 2), (screenH / 2) - (guiFrame.Height * 4 / 2), 368, 288), Color.White);
+                    //draw slots
+                    for (int si = 0; si < gui.getSlotAmmount(); si++)
+                    {
+                        Vector2 spos = gui.getSlotPos(si);
+                        spriteBatch.Draw(guiSlot, new Rectangle(Convert.ToInt32(spos.X) + (screenW / 2) - (guiFrame.Width * 4 / 2) + 16, Convert.ToInt32(spos.Y) + (screenH / 2) - (guiFrame.Height * 4 / 2) + 16, 17 * 3, 17 * 3), Color.White);
+                        if (gui.getItemIn(si) != 0)
+                        {
+                            spriteBatch.Draw(Block.getBlockByID(gui.getItemIn(si)).getTexture("1111"), new Rectangle(Convert.ToInt32(spos.X) + (screenW / 2) - (guiFrame.Width * 4 / 2) + 29, Convert.ToInt32(spos.Y) + (screenH / 2) - (guiFrame.Height * 4 / 2) + 29, 24, 24), Color.White);
+                        }
+                    }
+
+                    //draw images
+                    for (int si = 0; si < gui.getImageAmmount(); si++)
+                    {
+                        Vector2 spos = gui.getImagePos(si);
+                        spriteBatch.Draw(gui.getImageIn(si), new Rectangle(Convert.ToInt32(spos.X) + (screenW / 2) - (guiFrame.Width * 4 / 2) + 16, Convert.ToInt32(spos.Y) + (screenH / 2) - (guiFrame.Height * 4 / 2) + 16, gui.getImageIn(si).Width, gui.getImageIn(si).Height), Color.White);
+                    }
+
+                    //Draw holding block.
+                    spriteBatch.Draw(Block.getBlockByID(clientHolding).getTexture("0000"), new Rectangle(mousex, mousey, 24, 24), Color.White);
+                }
 
             //Draw hearts
             /*
@@ -614,7 +633,7 @@ namespace Reality
             int ry2 = player.getY() + renderDistanceY;
             int rx2 = player.getX() + renderDistanceX;
 
-            if ((toX >= rx2 || toY >= ry2 || toX < rx || toY < ry) && !init) return;
+            if ((toX >= rx2 || toY >= ry2 || toX < rx || toY < ry ) && !init) return;
 
             if (toX >= world.getWidth() || toY >= world.getHeight() || toX < 0 || toY < 0) return;
 
@@ -623,7 +642,7 @@ namespace Reality
             float newLight;
 
             if(world.getBlockAt(toX, toY) == 0 && world.getBgAt(toX, toY) != 0)
-                newLight = sourceLight - 0.1f;
+                newLight = sourceLight - 0.05f;
             else
                 newLight = sourceLight - 0.25f;
 
