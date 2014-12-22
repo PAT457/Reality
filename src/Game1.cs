@@ -89,6 +89,7 @@ namespace Reality
             this.graphics.ApplyChanges();
             //End Graphic Int.
             Block.supplyContent(this.Content);
+            guiTest.supplyContent(this.Content);
             //gui.supplyDrawingEngine(this.graphics, this.spriteBatch);
 
             light = new float[screenW/2, screenH/2];
@@ -122,6 +123,9 @@ namespace Reality
             guiSlot = Content.Load<Texture2D>("assets/GUIslot");
 
             //heart = Content.Load<Texture2D>("heart");
+
+            //Init GUIs (TEMP)
+            gui.init();
         }
 
         /// <summary>
@@ -567,6 +571,7 @@ namespace Reality
             if (drawGUI == true)
             {
                 spriteBatch.Draw(guiFrame, new Rectangle((screenW/2)-(guiFrame.Width*4/2), (screenH/2)-(guiFrame.Height*4/2), 368, 288), Color.White);
+                //draw slots
                 for (int si = 0; si < gui.getSlotAmmount(); si++)
                 {
                     Vector2 spos = gui.getSlotPos(si);
@@ -575,6 +580,13 @@ namespace Reality
                     {
                         spriteBatch.Draw(Block.getBlockByID(gui.getItemIn(si)).getTexture("1111"), new Rectangle(Convert.ToInt32(spos.X) + (screenW / 2) - (guiFrame.Width * 4 / 2) + 29, Convert.ToInt32(spos.Y) + (screenH / 2) - (guiFrame.Height * 4 / 2) + 29, 24, 24), Color.White);
                     }
+                }
+
+                //draw images
+                for (int si = 0; si < gui.getImageAmmount(); si++)
+                {
+                    Vector2 spos = gui.getImagePos(si);
+                    spriteBatch.Draw(gui.getImageIn(si), new Rectangle(Convert.ToInt32(spos.X) + (screenW / 2) - (guiFrame.Width * 4 / 2) + 16, Convert.ToInt32(spos.Y) + (screenH / 2) - (guiFrame.Height * 4 / 2) + 16, gui.getImageIn(si).Width, gui.getImageIn(si).Height), Color.White);
                 }
 
                 //Draw holding block.
