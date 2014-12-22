@@ -52,7 +52,7 @@ namespace Reality
         private int mousex;
         private int mousey;
 
-        Texture2D heart;
+        //Texture2D heart;
 
         private Texture2D hHud;
         public static bool g = false;
@@ -121,7 +121,7 @@ namespace Reality
             guiFrame = Content.Load<Texture2D>("assets/GUIframe");
             guiSlot = Content.Load<Texture2D>("assets/GUIslot");
 
-            heart = Content.Load<Texture2D>("heart");
+            //heart = Content.Load<Texture2D>("heart");
         }
 
         /// <summary>
@@ -582,10 +582,12 @@ namespace Reality
             }
 
             //Draw hearts
+            /*
             for (int k = 0; k < (player.getHealth() / player.getMaxHealth()) * 10; k++)
             {
                 //spriteBatch.Draw(heart, new Rectangle(screenW - ((k+1)*16), 4, 12, 12), Color.White);
             }
+             */
 
             //spriteBatch.Draw(hHud, new Rectangle(0, 24, 241, 24), Color.White); disabled, work on later.
             spriteBatch.End();
