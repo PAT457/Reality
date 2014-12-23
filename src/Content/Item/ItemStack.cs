@@ -64,7 +64,7 @@ namespace Reality.Content.Item
             return maxStack;
         }
 
-        public int getTotalItems()
+        public int getAmount()
         {
             return total;
         }

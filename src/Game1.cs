@@ -118,16 +118,16 @@ namespace Reality
 
             bkg = Content.Load<Texture2D>("bkg");
             invis = Content.Load<Texture2D>("inv");
-            font = Content.Load<SpriteFont>("tempFont");
+            font = Content.Load<SpriteFont>("segoe");
             hHud = Content.Load<Texture2D>("healthhud");
             guiFrame = Content.Load<Texture2D>("assets/GUIframe");
             guiSlot = Content.Load<Texture2D>("assets/GUIslot");
 
             //heart = Content.Load<Texture2D>("heart");
 
-            player.setItem(0, 0, new ItemStack(Block.getBlockByID(1), 100));
-            player.setItem(1, 0, new ItemStack(Block.getBlockByID(2), 100));
-            player.setItem(2, 0, new ItemStack(Block.getBlockByID(3), 100));
+            player.setItem(0, 0, new ItemStack(Block.getBlockByID(1), 1));
+            player.setItem(1, 0, new ItemStack(Block.getBlockByID(2), 1));
+            player.setItem(2, 0, new ItemStack(Block.getBlockByID(3), 1));
 
             //Init GUIs (TEMP)
             gui.init();
@@ -583,6 +583,12 @@ namespace Reality
                     {
                         spriteBatch.Draw(t, new Rectangle(p * 24 + (5*(p+1)), 5, 24, 24), Color.White * 0.2f);
                     }
+
+                    if (inv[p, 0].getAmount() > 1)
+                        if (p == sel)
+                            spriteBatch.DrawString(font, inv[p, 0].getAmount() + "", new Vector2(p * 24 + (5 * (p + 1)), 5), Color.White);
+                        else
+                            spriteBatch.DrawString(font, inv[p, 0].getAmount() + "", new Vector2(p * 24 + (5 * (p + 1)), 5), Color.White * 0.5f);
                 }
             }
 

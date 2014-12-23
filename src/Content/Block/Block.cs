@@ -116,6 +116,8 @@ namespace Reality.Content.Block
 
         public static Block getBlockByID(int id)
         {
+            if (id < 0) id *= -1;
+
             for (int i = 1; i <= 500; i++)
             {
                 if (blocks[i] != null)
