@@ -61,6 +61,7 @@ namespace Reality
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         SpriteFont font;
+        SpriteFont main;
 
         float[,] light;
 
@@ -119,6 +120,7 @@ namespace Reality
             bkg = Content.Load<Texture2D>("bkg");
             invis = Content.Load<Texture2D>("inv");
             font = Content.Load<SpriteFont>("segoe");
+            main = Content.Load<SpriteFont>("main");
             hHud = Content.Load<Texture2D>("healthhud");
             guiFrame = Content.Load<Texture2D>("assets/GUIframe");
             guiSlot = Content.Load<Texture2D>("assets/GUIslot");
@@ -180,10 +182,10 @@ namespace Reality
                         Vector2 sposs = gui.getSlotPos(sp);
                         int sx = (int)sposs.X;
                         int sy = (int)sposs.Y;
-                        int beginx = Convert.ToInt32(sx) + (screenW / 2) - (guiFrame.Width * 4 / 2)+16;
-                        int beginy = Convert.ToInt32(sy) + (screenH / 2) - (guiFrame.Height * 4 / 2)+16;
+                        int beginx = Convert.ToInt32(sx) + (screenW / 2) - (guiFrame.Width * 4 / 2) + 16;
+                        int beginy = Convert.ToInt32(sy) + (screenH / 2) - (guiFrame.Height * 4 / 2) + 16;
 
-                        if (mousex >= beginx && mousey >= beginy && mousex <= beginx+(17*3) && mousey <= beginy+(17*3) && lastLMact == false)
+                        if (mousex >= beginx && mousey >= beginy && mousex <= beginx + (17 * 3) && mousey <= beginy + (17 * 3) && lastLMact == false)
                         {
                             if (gui.getItemIn(sp) == 0)
                             {
@@ -592,31 +594,31 @@ namespace Reality
                 }
             }
 
-                //draw GUI if on
-                if (drawGUI == true)
+            //draw GUI if on
+            if (drawGUI == true)
+            {
+                spriteBatch.Draw(guiFrame, new Rectangle((screenW / 2) - (guiFrame.Width * 4 / 2), (screenH / 2) - (guiFrame.Height * 4 / 2), 368, 288), Color.White);
+                //draw slots
+                for (int si = 0; si < gui.getSlotAmmount(); si++)
                 {
-                    spriteBatch.Draw(guiFrame, new Rectangle((screenW / 2) - (guiFrame.Width * 4 / 2), (screenH / 2) - (guiFrame.Height * 4 / 2), 368, 288), Color.White);
-                    //draw slots
-                    for (int si = 0; si < gui.getSlotAmmount(); si++)
+                    Vector2 spos = gui.getSlotPos(si);
+                    spriteBatch.Draw(guiSlot, new Rectangle(Convert.ToInt32(spos.X) + (screenW / 2) - (guiFrame.Width * 4 / 2) + 16, Convert.ToInt32(spos.Y) + (screenH / 2) - (guiFrame.Height * 4 / 2) + 16, 17 * 3, 17 * 3), Color.White);
+                    if (gui.getItemIn(si) != 0)
                     {
-                        Vector2 spos = gui.getSlotPos(si);
-                        spriteBatch.Draw(guiSlot, new Rectangle(Convert.ToInt32(spos.X) + (screenW / 2) - (guiFrame.Width * 4 / 2) + 16, Convert.ToInt32(spos.Y) + (screenH / 2) - (guiFrame.Height * 4 / 2) + 16, 17 * 3, 17 * 3), Color.White);
-                        if (gui.getItemIn(si) != 0)
-                        {
-                            spriteBatch.Draw(Block.getBlockByID(gui.getItemIn(si)).getTexture("1111"), new Rectangle(Convert.ToInt32(spos.X) + (screenW / 2) - (guiFrame.Width * 4 / 2) + 29, Convert.ToInt32(spos.Y) + (screenH / 2) - (guiFrame.Height * 4 / 2) + 29, 24, 24), Color.White);
-                        }
+                        spriteBatch.Draw(Block.getBlockByID(gui.getItemIn(si)).getTexture("1111"), new Rectangle(Convert.ToInt32(spos.X) + (screenW / 2) - (guiFrame.Width * 4 / 2) + 29, Convert.ToInt32(spos.Y) + (screenH / 2) - (guiFrame.Height * 4 / 2) + 29, 24, 24), Color.White);
                     }
-
-                    //draw images
-                    for (int si = 0; si < gui.getImageAmmount(); si++)
-                    {
-                        Vector2 spos = gui.getImagePos(si);
-                        spriteBatch.Draw(gui.getImageIn(si), new Rectangle(Convert.ToInt32(spos.X) + (screenW / 2) - (guiFrame.Width * 4 / 2) + 16, Convert.ToInt32(spos.Y) + (screenH / 2) - (guiFrame.Height * 4 / 2) + 16, gui.getImageIn(si).Width, gui.getImageIn(si).Height), Color.White);
-                    }
-
-                    //Draw holding block.
-                    spriteBatch.Draw(Block.getBlockByID(clientHolding).getTexture("0000"), new Rectangle(mousex, mousey, 24, 24), Color.White);
                 }
+
+                //draw images
+                for (int si = 0; si < gui.getImageAmmount(); si++)
+                {
+                    Vector2 spos = gui.getImagePos(si);
+                    spriteBatch.Draw(gui.getImageIn(si), new Rectangle(Convert.ToInt32(spos.X) + (screenW / 2) - (guiFrame.Width * 4 / 2) + 16, Convert.ToInt32(spos.Y) + (screenH / 2) - (guiFrame.Height * 4 / 2) + 16, gui.getImageIn(si).Width, gui.getImageIn(si).Height), Color.White);
+                }
+
+                //Draw holding block.
+                spriteBatch.Draw(Block.getBlockByID(clientHolding).getTexture("0000"), new Rectangle(mousex, mousey, 24, 24), Color.White);
+            }
 
             //Draw hearts
             /*
