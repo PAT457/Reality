@@ -1,7 +1,7 @@
 Reality
 =======
 
-Version: Build 3
+Version: Build 7
 ================
 
 (See how to run the download and run the game at the bottom.)
