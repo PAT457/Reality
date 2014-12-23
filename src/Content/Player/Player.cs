@@ -67,7 +67,7 @@ namespace Reality.Content.Player
             selectedSlot++;
 
             if (selectedSlot > 10) selectedSlot = 1;
-            if (selectedSlot < 0) selectedSlot = 10;
+            if (selectedSlot <= 0) selectedSlot = 10;
         }
 
         public void slotDown()
@@ -75,7 +75,7 @@ namespace Reality.Content.Player
             selectedSlot--;
 
             if (selectedSlot > 10) selectedSlot = 1;
-            if (selectedSlot < 0) selectedSlot = 10;
+            if (selectedSlot <= 0) selectedSlot = 10;
         }
 
         public void setSlot(int i)
