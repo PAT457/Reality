@@ -48,3 +48,5 @@ C:\Users\Assossa\Documents\GitHub\Reality\src\bin\Windows\Release\SharpDX.XInput
 C:\Users\Assossa\Documents\GitHub\Reality\src\bin\Windows\Release\SharpDX.RawInput.xml
 C:\Users\Assossa\Documents\GitHub\Reality\src\bin\Windows\Release\SharpDX.Direct3D9.xml
 C:\Users\Assossa\Documents\GitHub\Reality\src\obj\x86\Release\Reality.csprojResolveAssemblyReference.cache
+C:\Users\Zambonie\Downloads\Reality-master (10)\Reality-master\src\obj\x86\Release\Reality.exe
+C:\Users\Zambonie\Downloads\Reality-master (10)\Reality-master\src\obj\x86\Release\Reality.pdb

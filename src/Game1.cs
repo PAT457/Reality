@@ -86,7 +86,7 @@ namespace Reality
             this.graphics.PreferredBackBufferWidth = screenW;
             this.graphics.PreferredBackBufferHeight = screenH;
             this.IsMouseVisible = true;
-            renderDistanceX = screenW / 24 + 1;
+            renderDistanceX = screenW / 24 + 2;
             renderDistanceY = screenH / 24 + 1;
             this.graphics.ApplyChanges();
             //End Graphic Int.
@@ -119,7 +119,7 @@ namespace Reality
 
             bkg = Content.Load<Texture2D>("bkg");
             invis = Content.Load<Texture2D>("inv");
-            font = Content.Load<SpriteFont>("segoe");
+            //font = Content.Load<SpriteFont>("segoe");
             main = Content.Load<SpriteFont>("main");
             hHud = Content.Load<Texture2D>("healthhud");
             guiFrame = Content.Load<Texture2D>("assets/GUIframe");
@@ -588,9 +588,9 @@ namespace Reality
 
                     if (inv[p, 0].getAmount() > 1)
                         if (p == sel)
-                            spriteBatch.DrawString(font, inv[p, 0].getAmount() + "", new Vector2(p * 24 + (5 * (p + 1)), 5), Color.White);
+                            spriteBatch.DrawString(main, inv[p, 0].getAmount() + "", new Vector2(p * 24 + (5 * (p + 1)), 5), Color.White);
                         else
-                            spriteBatch.DrawString(font, inv[p, 0].getAmount() + "", new Vector2(p * 24 + (5 * (p + 1)), 5), Color.White * 0.5f);
+                            spriteBatch.DrawString(main, inv[p, 0].getAmount() + "", new Vector2(p * 24 + (5 * (p + 1)), 5), Color.White * 0.5f);
                 }
             }
 
@@ -618,6 +618,17 @@ namespace Reality
 
                 //Draw holding block.
                 spriteBatch.Draw(Block.getBlockByID(clientHolding).getTexture("0000"), new Rectangle(mousex, mousey, 24, 24), Color.White);
+            }
+
+            //DRAW TEXT
+            int sel2 = player.getSelectedSlot() - 1;
+
+            if (inv[sel2, 0] != null)
+            {
+                if (inv[sel2, 0].getType())
+                {
+                    spriteBatch.DrawString(main, inv[sel2, 0].getBlock().getDisplayName(), new Vector2(screenW - 100, 10), Color.White);
+                }
             }
 
             //Draw hearts
