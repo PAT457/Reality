@@ -41,6 +41,7 @@
     <Compile Include="Content\Gui\guiImage.cs" />
     <Compile Include="Content\Gui\guiSlot.cs" />
     <Compile Include="Content\Gui\guiTest.cs" />
+    <Compile Include="Content\Gui\guiText.cs" />
     <Compile Include="Content\Item\Item.cs" />
     <Compile Include="Content\Item\ItemStack.cs" />
     <Compile Include="Content\Player\Player.cs" />

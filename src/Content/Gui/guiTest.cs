@@ -8,10 +8,11 @@ using System.Text;
 
 namespace Reality.Content.Gui
 {
-    class guiTest
+    class guiTest : Gui
     {
         public guiSlot[] slots = new guiSlot[50];
         public guiImage[] textures = new guiImage[50];
+        public guiText[] text = new guiText[50];             //A limit of 50 is set on each object to prevent overuse and RAM issues. Even 50 seems a little crazy - I might lower it to 25 or something.
         private static ContentManager Content;
 
         public guiTest()
@@ -26,6 +27,8 @@ namespace Reality.Content.Gui
             slots[2] = new guiSlot(73, 35, true);
 
             textures[0] = new guiImage(100, 100, Content.Load<Texture2D>("Blocks/grass.1111"));
+
+            text[0] = new guiText("Strange Crafting Table...", 200, 100);
         }
 
         public static void supplyContent(ContentManager Con)
@@ -43,6 +46,11 @@ namespace Reality.Content.Gui
             return textures[imageID].getImage();
         }
 
+        public String getTextIn(int textID)
+        {
+            return text[textID].getText();
+        }
+
         public void setItemIn(int slotID, int itemID)
         {
             slots[slotID].setItemInSlot(itemID);
@@ -51,6 +59,11 @@ namespace Reality.Content.Gui
         public void setTextureIn(int imageID, Texture2D texture)
         {
             textures[imageID].setImage(texture);
+        }
+
+        public void setTextIn(int textID, String newText)
+        {
+            text[textID].setText(newText);
         }
 
         public int getSlotAmmount()
@@ -63,6 +76,11 @@ namespace Reality.Content.Gui
             return 1; //Change Soon.
         }
 
+        public int getTextAmmount()
+        {
+            return 1; //Change Soon.
+        }
+
         public Vector2 getSlotPos(int slotID)
         {
             return slots[slotID].getPos();
@@ -70,6 +88,11 @@ namespace Reality.Content.Gui
         public Vector2 getImagePos(int imageID)
         {
             return textures[imageID].getImagePos();
+        }
+
+        public Vector2 getTextPos(int textID)
+        {
+            return text[textID].getTextPos();
         }
 
         public void updateGUI()
