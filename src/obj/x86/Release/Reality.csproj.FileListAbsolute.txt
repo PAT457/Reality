@@ -50,3 +50,28 @@ C:\Users\Assossa\Documents\GitHub\Reality\src\bin\Windows\Release\SharpDX.Direct
 C:\Users\Assossa\Documents\GitHub\Reality\src\obj\x86\Release\Reality.csprojResolveAssemblyReference.cache
 C:\Users\Zambonie\Downloads\Reality-master (10)\Reality-master\src\obj\x86\Release\Reality.exe
 C:\Users\Zambonie\Downloads\Reality-master (10)\Reality-master\src\obj\x86\Release\Reality.pdb
+C:\Users\Zambonie\Documents\Projects\Reality\Reality-master\src\obj\x86\Release\Reality.exe
+C:\Users\Zambonie\Documents\Projects\Reality\Reality-master\src\obj\x86\Release\Reality.pdb
+C:\Users\Zambonie\Documents\Projects\Reality\Reality-master\src\bin\Windows\Release\Reality.exe
+C:\Users\Zambonie\Documents\Projects\Reality\Reality-master\src\bin\Windows\Release\Reality.pdb
+C:\Users\Zambonie\Documents\Projects\Reality\Reality-master\src\bin\Windows\Release\MonoGame.Framework.dll
+C:\Users\Zambonie\Documents\Projects\Reality\Reality-master\src\bin\Windows\Release\SharpDX.MediaFoundation.dll
+C:\Users\Zambonie\Documents\Projects\Reality\Reality-master\src\bin\Windows\Release\SharpDX.dll
+C:\Users\Zambonie\Documents\Projects\Reality\Reality-master\src\bin\Windows\Release\SharpDX.XAudio2.dll
+C:\Users\Zambonie\Documents\Projects\Reality\Reality-master\src\bin\Windows\Release\SharpDX.Direct3D11.dll
+C:\Users\Zambonie\Documents\Projects\Reality\Reality-master\src\bin\Windows\Release\SharpDX.DXGI.dll
+C:\Users\Zambonie\Documents\Projects\Reality\Reality-master\src\bin\Windows\Release\SharpDX.Direct2D1.dll
+C:\Users\Zambonie\Documents\Projects\Reality\Reality-master\src\bin\Windows\Release\Lidgren.Network.dll
+C:\Users\Zambonie\Documents\Projects\Reality\Reality-master\src\bin\Windows\Release\SharpDX.XInput.dll
+C:\Users\Zambonie\Documents\Projects\Reality\Reality-master\src\bin\Windows\Release\SharpDX.RawInput.dll
+C:\Users\Zambonie\Documents\Projects\Reality\Reality-master\src\bin\Windows\Release\SharpDX.Direct3D9.dll
+C:\Users\Zambonie\Documents\Projects\Reality\Reality-master\src\bin\Windows\Release\SharpDX.MediaFoundation.xml
+C:\Users\Zambonie\Documents\Projects\Reality\Reality-master\src\bin\Windows\Release\SharpDX.xml
+C:\Users\Zambonie\Documents\Projects\Reality\Reality-master\src\bin\Windows\Release\SharpDX.XAudio2.xml
+C:\Users\Zambonie\Documents\Projects\Reality\Reality-master\src\bin\Windows\Release\SharpDX.Direct3D11.xml
+C:\Users\Zambonie\Documents\Projects\Reality\Reality-master\src\bin\Windows\Release\SharpDX.DXGI.xml
+C:\Users\Zambonie\Documents\Projects\Reality\Reality-master\src\bin\Windows\Release\SharpDX.Direct2D1.xml
+C:\Users\Zambonie\Documents\Projects\Reality\Reality-master\src\bin\Windows\Release\SharpDX.XInput.xml
+C:\Users\Zambonie\Documents\Projects\Reality\Reality-master\src\bin\Windows\Release\SharpDX.RawInput.xml
+C:\Users\Zambonie\Documents\Projects\Reality\Reality-master\src\bin\Windows\Release\SharpDX.Direct3D9.xml
+C:\Users\Zambonie\Documents\Projects\Reality\Reality-master\src\obj\x86\Release\Reality.csprojResolveAssemblyReference.cache

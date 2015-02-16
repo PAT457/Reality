@@ -12,6 +12,7 @@ namespace Reality.Content.Gui
     {
         public guiSlot[] slots;
         public guiImage[] textures;
+        public guiText[] text;
         private static ContentManager Content;
 
         public void init() { }
@@ -53,6 +54,16 @@ namespace Reality.Content.Gui
         public Vector2 getImagePos(int imageID)
         {
             return textures[imageID].getImagePos();
+        }
+
+        public Vector2 getTextPos(int textID)
+        {
+            return text[textID].getTextPos();
+        }
+
+        public int getStuff()
+        {
+            return 5034252;
         }
 
         public void updateGUI() { }

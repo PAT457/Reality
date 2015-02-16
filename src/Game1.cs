@@ -616,6 +616,13 @@ namespace Reality
                     spriteBatch.Draw(gui.getImageIn(si), new Rectangle(Convert.ToInt32(spos.X) + (screenW / 2) - (guiFrame.Width * 4 / 2) + 16, Convert.ToInt32(spos.Y) + (screenH / 2) - (guiFrame.Height * 4 / 2) + 16, gui.getImageIn(si).Width, gui.getImageIn(si).Height), Color.White);
                 }
 
+                //draw text
+                for (int si = 0; si < gui.getTextAmmount(); si++)
+                {
+                    Vector2 spos = gui.getTextPos(si);
+                    spriteBatch.DrawString(main, gui.getTextIn(si), new Vector2(Convert.ToInt32(spos.X) + (screenW / 2) - (guiFrame.Width * 4 / 2) + 29, Convert.ToInt32(spos.Y) + (screenH / 2) - (guiFrame.Height * 4 / 2) + 29), Color.White);
+                }
+
                 //Draw holding block.
                 spriteBatch.Draw(Block.getBlockByID(clientHolding).getTexture("0000"), new Rectangle(mousex, mousey, 24, 24), Color.White);
             }
