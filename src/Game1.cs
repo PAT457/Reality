@@ -30,18 +30,23 @@ namespace Reality
 
         private WorldGen world = Generation.genPlain();
         private Player player = new Player(250, 250, 100);
-        private static int screenW = 800;
-        private static int screenH = 450;
+        private static int screenW = 1600;
+        private static int screenH = 900;
         public static int renderDistanceX;
         public static int renderDistanceY;
         public static int wheelDirection = 0;
         private int lastWheelP = 0;
         //private Color color;
+
         private Block grass;
         private Block dirt;
         private Block stone;
+        private Block fan;
+        private Block tallgrass;
+
         private int f = 0;
         private Texture2D bkg;
+        private Texture2D hills;
         private Texture2D invis;
         private bool drawGUI = true;
         private Texture2D guiFrame;
@@ -53,6 +58,12 @@ namespace Reality
         private int mousex;
         private int mousey;
 
+        public static int hills0 = -1600;
+        public static int hills1 = 0;
+        public static int hills2 = 1600;
+
+        public static int hillsY = 100;
+
         //Texture2D heart;
 
         private Texture2D hHud;
@@ -62,6 +73,8 @@ namespace Reality
         SpriteBatch spriteBatch;
         SpriteFont font;
         SpriteFont main;
+
+        FrameSleep animBlockUpdate = new FrameSleep();
 
         float[,] light;
 
@@ -101,6 +114,7 @@ namespace Reality
 
         /// <summary>
         /// LoadContent will be called once per game and is the place to load
+        /// 
         /// all of your content.
         /// </summary>
         protected override void LoadContent()
@@ -109,15 +123,32 @@ namespace Reality
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
-            grass = new Block(1, "Grass", Block.sidesAll, "grass", 100);
-            dirt = new Block(2, "Dirt", Block.sidesAll, "dirt", 100);
-            stone = new Block(3, "Stone", Block.sidesAll, "stone", 100);
+            grass = new Block(1, "Grass", Block.sidesAll, 100);
+            dirt = new Block(2, "Dirt", Block.sidesAll, 100);
+            stone = new Block(3, "Stone", Block.sidesAll, 100);
+            fan = new Block(4, "Fan", Block.sidesAll, 100);
+            tallgrass = new Block(5, "Tall Grass", Block.sidesAll, 100);
+            fan.setAnimatable(true);
+            fan.setTextures("fan");
+
+            grass.setTextures(Block.sidesAll, "grass");
+            dirt.setTextures(Block.sidesAll, "dirt");
+            stone.setTextures(Block.sidesAll, "stone");
+            tallgrass.setTextures(Block.sidesAll, "tallgrass");
+
+            grass.setOffsetY(4);
+
+            tallgrass.setAlwaysBackground(true);
+            tallgrass.setBkgLightEffect(false);
 
             Block.registerBlock(grass);
             Block.registerBlock(dirt);
             Block.registerBlock(stone);
+            Block.registerBlock(fan);
+            Block.registerBlock(tallgrass);
 
             bkg = Content.Load<Texture2D>("bkg");
+            hills = Content.Load<Texture2D>("assets/Hills");
             invis = Content.Load<Texture2D>("inv");
             //font = Content.Load<SpriteFont>("segoe");
             main = Content.Load<SpriteFont>("main");
@@ -130,9 +161,14 @@ namespace Reality
             player.setItem(0, 0, new ItemStack(Block.getBlockByID(1), 1));
             player.setItem(1, 0, new ItemStack(Block.getBlockByID(2), 1));
             player.setItem(2, 0, new ItemStack(Block.getBlockByID(3), 1));
+            player.setItem(3, 0, new ItemStack(Block.getBlockByID(4), 1));
+            player.setItem(4, 0, new ItemStack(Block.getBlockByID(5), 1));
+
+            //TEMP
 
             //Init GUIs (TEMP)
             gui.init();
+
         }
 
         /// <summary>
@@ -171,6 +207,11 @@ namespace Reality
 
                 int wx = (x / 24 + player.getX() - renderDistanceX / 2) + 1;
                 int wy = y / 24 + player.getY() - renderDistanceY / 2;
+
+                if (world.getBlockAt(wx, wy) != 0)
+                {
+                    player.getSelectedStack().changeTotal(player.getSelectedStack().getAmount() + 1);
+                }
 
                 world.setBlock(wx, wy, 0);
 
@@ -219,9 +260,19 @@ namespace Reality
 
                 if (world.getBlockAt(wx, wy) == 0 && world.hasSurroundingBlock(wx, wy))
                 {
-                    if (player.getSelectedStack() != null && player.getSelectedStack().getType())
+                    if (player.getSelectedStack() != null && player.getSelectedStack().getType() && player.getSelectedStack().getAmount() >= 1)
                     {
-                        world.setBlock(wx, wy, player.getSelectedStack().getBlock().getID());
+                        if (player.getSelectedStack().getBlock().isAlwaysBackground())
+                        {
+                            world.setBg(wx, wy, player.getSelectedStack().getBlock().getID());
+                            player.getSelectedStack().changeTotal(player.getSelectedStack().getAmount()-1);
+                        }
+
+                        else
+                        {
+                            world.setBlock(wx, wy, player.getSelectedStack().getBlock().getID());
+                            player.getSelectedStack().changeTotal(player.getSelectedStack().getAmount() - 1);
+                        }
                     }
                 }
 
@@ -322,10 +373,10 @@ namespace Reality
                 {
                     for (int x = 0; x < world.getWidth(); x++)
                     {
-                        world.setLight(x, y, 0);
+                        //world.setLight(x, y, 0);
                     }
                 }
-                PropogateLight(1.0f, player.getX(), player.getY(), true);
+                //PropogateLight(1.0f, player.getX(), player.getY(), true);
             }
 
             //Keep Jumping
@@ -365,11 +416,51 @@ namespace Reality
             {
                 for (int x = 0; x < world.getWidth(); x++)
                 {
-                    world.setLight(x, y, 0);
+                    //world.setLight(x, y, 0);
                 }
             }
 
-            PropogateLight(1.0f, player.getX(), player.getY(), true);
+            //Check Hills
+            if (hills2 <= 0)
+            {
+                hills0 = -1600;
+                hills1 = 0;
+                hills2 = 1600;
+            }
+
+            if (hills1 >= 1601)
+            {
+                hills0 = -1600;
+                hills1 = 0;
+                hills2 = 1600;
+            }
+
+            //Update block textures (if it is animatable)'
+
+            if (animBlockUpdate.wait(10))
+            {
+                for (int bl = 0; bl < Block.getBlocks().Length; bl++)
+                {
+                    if (Block.getBlocks()[bl] != null)
+                    {
+                        if (Block.getBlocks()[bl].isAnimatable())
+                        {
+                            Console.Out.WriteLine("Block " + Block.getBlocks()[bl].getDisplayName() + " is a anim. currently " + Block.getBlocks()[bl].getCurrentTexture() + " max is " + Block.getBlocks()[bl].getTextureAmmount());
+                            if (Block.getBlocks()[bl].getCurrentTexture() != Block.getBlocks()[bl].getTextureAmmount() - 1)
+                            {
+                                Block.getBlocks()[bl].setCurrentTexture(Block.getBlocks()[bl].getCurrentTexture() + 1);
+                            }
+
+                            else
+                            {
+                                Block.getBlocks()[bl].setCurrentTexture(0);
+                            }
+                        }
+                    }
+                }
+            }
+
+                //PropogateLight(1.0f, player.getX(), player.getY(), true);
 
             // TODO: Add your update logic here
             base.Update(gameTime);
@@ -386,6 +477,9 @@ namespace Reality
             // TODO: Add your drawing code here
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone);
             spriteBatch.Draw(bkg, new Rectangle(0, 0, screenW, screenH), Color.White); //Change it to fit the screen res, not just mine.
+            spriteBatch.Draw(hills, new Rectangle(hills0, hillsY, screenW, screenH), Color.White);
+            spriteBatch.Draw(hills, new Rectangle(hills1, hillsY, screenW, screenH), Color.White);
+            spriteBatch.Draw(hills, new Rectangle(hills2, hillsY, screenW, screenH), Color.White);
 
             int ry = player.getY() - renderDistanceY/2;
             int rx = player.getX() - renderDistanceX / 2;
@@ -438,20 +532,30 @@ namespace Reality
 
                     if (bgID != 0)
                     {
-                        float level = world.getLightAt(rx, ry);
-                        level -= 0.5f;
-                        spriteBatch.Draw(Block.getBlockByID(bgID).getTexture(side), new Rectangle((x - 1) * 24 - offx, y * 24 - offy, 24, 24), new Color(level, level, level));
+                        //float level = world.getLightAt(rx, ry);
+                        //level -= 0.5f;
+                        if (Block.getBlockByID(bgID).getBkgLightEffect())
+                        {
+                            spriteBatch.Draw(Block.getBlockByID(bgID).getTexture(side), new Rectangle((x - 1) * 24 - offx - Block.getBlockByID(bgID).getOffsetX(), y * 24 - offy - Block.getBlockByID(bgID).getOffsetY(), 24 + Block.getBlockByID(bgID).getOffsetX(), 24 + Block.getBlockByID(bgID).getOffsetY()), Color.Gray);
+                        }
+
+                        else
+                        {
+                            spriteBatch.Draw(Block.getBlockByID(bgID).getTexture(side), new Rectangle((x - 1) * 24 - offx - Block.getBlockByID(bgID).getOffsetX(), y * 24 - offy - Block.getBlockByID(bgID).getOffsetY(), 24 + Block.getBlockByID(bgID).getOffsetX(), 24 + Block.getBlockByID(bgID).getOffsetY()), Color.White);
+                        }
                     }
 
                     if (blockID != 0)
                     {
-                        float level2 = world.getLightAt(rx, ry);
-                        spriteBatch.Draw(Block.getBlockByID(blockID).getTexture(side), new Rectangle((x - 1) * 24 - offx, y * 24 - offy, 24, 24), new Color(level2, level2, level2));
+                        //float level2 = world.getLightAt(rx, ry);
+                        spriteBatch.Draw(Block.getBlockByID(blockID).getTexture(side), new Rectangle((x - 1) * 24 - offx - Block.getBlockByID(blockID).getOffsetX(), y * 24 - offy - Block.getBlockByID(blockID).getOffsetY(), 24 + Block.getBlockByID(blockID).getOffsetX(), 24 + Block.getBlockByID(blockID).getOffsetY()), Color.White);
                     }
                     rx++;
                 }
                 ry++;
             }
+
+            spriteBatch.Draw(grass.getTexture("0000"), new Rectangle(screenW/2-8, screenH/2+6, 24, 24), Color.White);
 
             //Lighting code
             /*
@@ -546,7 +650,7 @@ namespace Reality
                 {
                     charlightLevel = charlightLevel - 8;
                 }
-            }*/
+            }*$#/
             //color = new Color(charlightLevel, charlightLevel, charlightLevel);
             spriteBatch.Draw(dirt.getTexture("0000"), new Rectangle(screenW / 24 / 2 * 24, screenH / 24 / 2 * 24, 24, 24), Color.White); // Player
 
@@ -651,7 +755,7 @@ namespace Reality
             base.Draw(gameTime);
         }
 
-        public void PropogateLight(float sourceLight, int toX, int toY, bool init)
+        /*public void PropogateLight(float sourceLight, int toX, int toY, bool init)
         {
             int ry = player.getY() - renderDistanceY;
             int rx = player.getX() - renderDistanceX;
@@ -679,14 +783,14 @@ namespace Reality
             {
                 world.setLight(toX, toY, 0);
                 return;
-            }
+            }*/
 
-            world.setLight(toX, toY, newLight);
+            //world.setLight(toX, toY, newLight);
 
-            PropogateLight(newLight, toX + 1, toY, false);
-            PropogateLight(newLight, toX - 1, toY, false);
-            PropogateLight(newLight, toX, toY + 1, false);
-            PropogateLight(newLight, toX, toY - 1, false);
-        }
+            //PropogateLight(newLight, toX + 1, toY, false);
+            //PropogateLight(newLight, toX - 1, toY, false);
+            //PropogateLight(newLight, toX, toY + 1, false);
+            //PropogateLight(newLight, toX, toY - 1, false);
+        
     }
 }

@@ -46,6 +46,7 @@
     <Compile Include="Content\Item\ItemStack.cs" />
     <Compile Include="Content\Player\Player.cs" />
     <Compile Include="Content\TileEntity\TileEntity.cs" />
+    <Compile Include="Content\Utils\FrameSleep.cs" />
     <Compile Include="Content\Utils\getDecimal.cs" />
     <Compile Include="Content\Utils\trim.cs" />
     <Compile Include="Content\World\WorldGen.cs" />

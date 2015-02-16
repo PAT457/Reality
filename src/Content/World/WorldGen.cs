@@ -9,7 +9,7 @@ namespace Reality.Content.World
     {
         private int[,] world;
         private int[,] bg;
-        private float[,] light;
+        //private float[,] light;
         private int width;
         private int height;
 
@@ -20,7 +20,7 @@ namespace Reality.Content.World
             height = h;
             world = new int[height, width];
             bg = new int[height, width];
-            light = new float[height, width];
+            //light = new float[height, width];
 
             for (int y = 0; y < height; y++)
             {
@@ -28,7 +28,7 @@ namespace Reality.Content.World
                 {
                     world[y, x] = 0;
                     bg[y, x] = 0;
-                    light[y, x] = 0;
+                    //light[y, x] = 0;
                 }
             }
         }
@@ -43,9 +43,9 @@ namespace Reality.Content.World
             return bg;
         }
 
-        public float[,] getLight() { return light; }
+        //public float[,] getLight() { return light; }
 
-        public void setLight(float[,] light) { this.light = light; }
+        //public void setLight(float[,] light) { this.light = light; }
 
         public void setBg(int[,] i)
         {
@@ -71,10 +71,10 @@ namespace Reality.Content.World
             return bg[y, x];
         }
 
-        public float getLightAt(int x, int y)
-        {
-            return light[y, x];
-        }
+        //public float getLightAt(int x, int y)
+        //{
+        //    return light[y, x];
+        //}
 
         public int getWidth()
         {
@@ -128,7 +128,7 @@ namespace Reality.Content.World
             return true;
         }
 
-        public bool setLight(int x, int y, float level)
+        /*public bool setLight(int x, int y, float level)
         {
             if (x >= width || x <= 0 || y >= height || y <= 0) //Cheks if the block placment is out of bounds.
             {
@@ -138,7 +138,7 @@ namespace Reality.Content.World
             //Console.WriteLine("Debug: {0} {1}", x, y);
             light[y, x] = level;
             return true;
-        }
+        }*/
 
         /// <summary>
         /// Gets if there is a block other then air around it.

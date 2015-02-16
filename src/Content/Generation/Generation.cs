@@ -66,11 +66,24 @@ namespace Reality.Content.Generation
                 }
             }
 
+
             int[,] bg = new int[500,500];
 
             Array.Copy(world.getWorld(), bg, world.getWorld().Length);
 
             world.setBg(bg);
+
+            //Random Generate Grass
+            for (int i = 0; i < 500; i++)
+            {
+                for (int gy = 0; gy < 500; gy++)
+                {
+                    if (world.getBlockAt(i, gy) == 1 && random.Next(4) == 2)
+                    {
+                        world.setBg(i, gy - 1, 5);
+                    }
+                }
+            }
 
             return world;
         }

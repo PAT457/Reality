@@ -179,6 +179,7 @@ namespace Reality.Content.Player
                 {
                     int fixedpos = getOffY() + speed - 23;
                     setPos(getX(), getY() + 1, getOffX(), fixedpos);
+                    Game1.hillsY -= 1;
                     if (world.getBlockAt(getX(), getY() + 2) != 0 && getOffY() > 0)   //Check this later.
                     {
                         setPos(getX(), getY(), getOffX(), 0);
@@ -220,6 +221,7 @@ namespace Reality.Content.Player
                 {
                     int fixedpos = 23 - speed + getOffY();
                     setPos(getX(), getY() - 1, getOffX(), fixedpos);
+                    Game1.hillsY += 1;
                 }
                 else
                 {
@@ -255,6 +257,9 @@ namespace Reality.Content.Player
                 else
                 {
                     setPos(getX(), getY(), getOffX() - speed, getOffY());
+                    Game1.hills0 += 1;
+                    Game1.hills1 += 1;
+                    Game1.hills2 += 1;
                 }
             }
 
@@ -290,6 +295,9 @@ namespace Reality.Content.Player
                 else
                 {
                     setPos(getX(), getY(), getOffX() + speed, getOffY());
+                    Game1.hills0 -= 1;
+                    Game1.hills1 -= 1;
+                    Game1.hills2 -= 1;
                 }
             }
 
