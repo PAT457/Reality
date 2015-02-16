@@ -69,11 +69,6 @@ namespace Reality.Content.Block
             return basename;
         }
 
-        public void giveGUI()
-        {
-
-        }
-
         public static void supplyContent(ContentManager Con)
         {
             Content = Con;
