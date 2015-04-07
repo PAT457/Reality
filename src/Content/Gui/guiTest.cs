@@ -22,13 +22,13 @@ namespace Reality.Content.Gui
 
         public void init()
         {
-            slots[0] = new guiSlot(2, 2, true);
-            slots[1] = new guiSlot(2, 73, true);
-            slots[2] = new guiSlot(73, 35, true);
+            slots[0] = new guiSlot(2, 40, true);
+            slots[1] = new guiSlot(2, 113, true);
+            slots[2] = new guiSlot(73, 75, true);
 
             textures[0] = new guiImage(100, 100, Content.Load<Texture2D>("Blocks/grass.1111"));
 
-            text[0] = new guiText("Strange Crafting Table...", 200, 100);
+            text[0] = new guiText("Test Crafting Table", 1, 1);
         }
 
         public static void supplyContent(ContentManager Con)

@@ -8,12 +8,14 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Storage;
 using Microsoft.Xna.Framework.GamerServices;
 using Reality.Content.World;
-using Reality.Content.Player;
+using Reality.Content.PlayerNS;
 using Reality.Content.Block;
 using Reality.Content.Generation;
 using Reality.Content.Utils;
 using Reality.Content.Gui;
-using Reality.Content.Item;
+using Reality.Content.ItemNS;
+using Reality.Content.ItemEntityNS;
+using Reality.Content.Weather;
 #endregion
 
 namespace Reality
@@ -28,8 +30,10 @@ namespace Reality
         //Mouse Wheel directions:
         //-1 is down, 0 is still, +1 is up.
 
+        //The Variable section is a complete mess, I know. I will organize it. One day.
+        
         private WorldGen world = Generation.genPlain();
-        private Player player = new Player(250, 250, 100);
+        private Player player;
         private static int screenW = 1600;
         private static int screenH = 900;
         public static int renderDistanceX;
@@ -43,6 +47,10 @@ namespace Reality
         private Block stone;
         private Block fan;
         private Block tallgrass;
+
+        private Item apple;
+
+        private Weather rain;
 
         private int f = 0;
         private Texture2D bkg;
@@ -64,6 +72,8 @@ namespace Reality
 
         public static int hillsY = 100;
 
+        private static int frameSleepAmount = 1;
+
         //Texture2D heart;
 
         private Texture2D hHud;
@@ -75,6 +85,8 @@ namespace Reality
         SpriteFont main;
 
         FrameSleep animBlockUpdate = new FrameSleep();
+        FrameSleep gravityWait = new FrameSleep();
+        FrameSleep gravityWait2 = new FrameSleep();
 
         float[,] light;
 
@@ -98,6 +110,7 @@ namespace Reality
             Console.WriteLine("{0}    {1}", GraphicsDevice.Viewport.Width, GraphicsDevice.DisplayMode.Height);
             this.graphics.PreferredBackBufferWidth = screenW;
             this.graphics.PreferredBackBufferHeight = screenH;
+            this.Window.AllowUserResizing = true;
             this.IsMouseVisible = true;
             renderDistanceX = screenW / 24 + 2;
             renderDistanceY = screenH / 24 + 1;
@@ -105,6 +118,7 @@ namespace Reality
             //End Graphic Int.
             Block.supplyContent(this.Content);
             guiTest.supplyContent(this.Content);
+            Item.supplyContent(this.Content);
             //gui.supplyDrawingEngine(this.graphics, this.spriteBatch);
 
             light = new float[screenW/2, screenH/2];
@@ -122,11 +136,21 @@ namespace Reality
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            //Create Player
+            loadPlayer.createPlayer();
+
             // TODO: use this.Content to load your game content here
             grass = new Block(1, "Grass", Block.sidesAll, 100);
             dirt = new Block(2, "Dirt", Block.sidesAll, 100);
             stone = new Block(3, "Stone", Block.sidesAll, 100);
             fan = new Block(4, "Fan", Block.sidesAll, 100);
+
+            //Items
+            apple = new Item(1, "Apple", "apple", 200);
+
+            //Weather
+            //rain = new Weather(1, 20, "rainpellet");
+
             tallgrass = new Block(5, "Tall Grass", Block.sidesAll, 100);
             fan.setAnimatable(true);
             fan.setTextures("fan");
@@ -147,6 +171,10 @@ namespace Reality
             Block.registerBlock(fan);
             Block.registerBlock(tallgrass);
 
+            Item.registerItem(apple);
+
+            apple.addUpdate(1, itementityApple.update);
+
             bkg = Content.Load<Texture2D>("bkg");
             hills = Content.Load<Texture2D>("assets/Hills");
             invis = Content.Load<Texture2D>("inv");
@@ -157,12 +185,16 @@ namespace Reality
             guiSlot = Content.Load<Texture2D>("assets/GUIslot");
 
             //heart = Content.Load<Texture2D>("heart");
+            player = loadPlayer.getPlayer();
 
             player.setItem(0, 0, new ItemStack(Block.getBlockByID(1), 1));
             player.setItem(1, 0, new ItemStack(Block.getBlockByID(2), 1));
             player.setItem(2, 0, new ItemStack(Block.getBlockByID(3), 1));
             player.setItem(3, 0, new ItemStack(Block.getBlockByID(4), 1));
             player.setItem(4, 0, new ItemStack(Block.getBlockByID(5), 1));
+            player.setItem(6, 0, new ItemStack(Item.getItemByID(1), 1));
+            
+            loadPlayer.setPlayer(player);
 
             //TEMP
 
@@ -187,6 +219,8 @@ namespace Reality
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+
+            player = loadPlayer.getPlayer();
             //Exit out of GUI
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
             {
@@ -223,14 +257,15 @@ namespace Reality
                         Vector2 sposs = gui.getSlotPos(sp);
                         int sx = (int)sposs.X;
                         int sy = (int)sposs.Y;
-                        int beginx = Convert.ToInt32(sx) + (screenW / 2) - (guiFrame.Width * 4 / 2) + 16;
+                        int beginx = Convert.ToInt32(sx) + (screenW / 2) - (guiFrame.Width * 4 / 2) + 16;       //Check out later.
                         int beginy = Convert.ToInt32(sy) + (screenH / 2) - (guiFrame.Height * 4 / 2) + 16;
 
                         if (mousex >= beginx && mousey >= beginy && mousex <= beginx + (17 * 3) && mousey <= beginy + (17 * 3) && lastLMact == false)
                         {
                             if (gui.getItemIn(sp) == 0)
                             {
-                                gui.setItemIn(sp, clientHolding);
+                                ItemStack[,] inv = player.getInventory();
+                                gui.setItemIn(sp, inv[player.getSelectedSlot()-1, 0].getID());
                             }
 
                             else
@@ -364,6 +399,7 @@ namespace Reality
                     f = f + 1;
                     gravity = false;
                     g = false;
+                    player.setSpeed(9);
                 }
             }
 
@@ -380,20 +416,25 @@ namespace Reality
             }
 
             //Keep Jumping
-            if (f != 0 && f < 20)
+            if (player.getSpeed() != 1 && gravity == false)
             {
-                if (f < 15)
+                player.moveUp(world);
+                if (gravityWait.wait(2))
                 {
-                    player.moveUp(world);
-                    //--player.setSpeed(player.getSpeed()-1);
+                    player.setSpeed(player.getSpeed() - 2);
                 }
-                f++;
             }
 
-            else if (f >= 10)
+            else if (player.getSpeed() == 1 && gravity == false && !gravityWait.wait(1))
+            {
+                player.moveUp(world);
+            }
+
+            else if (player.getSpeed() == 1 && gravity == false && gravityWait2.wait(2))
             {
                 f = 0;
                 gravity = true;
+                frameSleepAmount = 1;
                 player.setSpeed(6);
             }
 
@@ -462,7 +503,10 @@ namespace Reality
 
                 //PropogateLight(1.0f, player.getX(), player.getY(), true);
 
-            // TODO: Add your update logic here
+            // Update all items (if it is updatable)
+            Item.update();
+
+            loadPlayer.setPlayer(player);
             base.Update(gameTime);
         }
 
@@ -472,10 +516,15 @@ namespace Reality
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
+            player = loadPlayer.getPlayer();
             GraphicsDevice.Clear(Color.Beige);
+
+            //float frameRate = 1 / (float)gameTime.ElapsedGameTime.TotalSeconds; FPS Counter. Will use later.
+            //Console.WriteLine(frameRate);
 
             // TODO: Add your drawing code here
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone);
+
             spriteBatch.Draw(bkg, new Rectangle(0, 0, screenW, screenH), Color.White); //Change it to fit the screen res, not just mine.
             spriteBatch.Draw(hills, new Rectangle(hills0, hillsY, screenW, screenH), Color.White);
             spriteBatch.Draw(hills, new Rectangle(hills1, hillsY, screenW, screenH), Color.White);
@@ -679,7 +728,11 @@ namespace Reality
                     Texture2D t;
 
                     if (b) t = inv[p, 0].getBlock().getTexture();
-                    else t = inv[p, 0].getItem().getTexture();
+                    else
+                    {
+                        Item itemt = inv[p, 0].getItem();
+                        t = itemt.getTexture();
+                    }
 
                     if (p == sel)
                     {

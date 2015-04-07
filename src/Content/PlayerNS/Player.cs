@@ -5,9 +5,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using Reality.Content.Item;
+using Reality.Content.ItemNS;
+using Reality.Content.Utils;
 
-namespace Reality.Content.Player
+namespace Reality.Content.PlayerNS
 {
     class Player
     {
@@ -19,6 +20,9 @@ namespace Reality.Content.Player
         private int health;
         private int maxHealth;
         private int block;
+        private int curspeed = 6;
+
+        private FrameSleep gravityfallWait = new FrameSleep();
 
         private ItemStack[,] inventory;
         private int selectedSlot;
@@ -127,7 +131,8 @@ namespace Reality.Content.Player
 
         public void setSpeed(int nspeed)
         {
-            speed = nspeed;
+            if (nspeed <= 1) speed = 1;
+            else speed = nspeed;
         }
 
         public int getSpeed()
@@ -183,10 +188,18 @@ namespace Reality.Content.Player
                     if (world.getBlockAt(getX(), getY() + 2) != 0 && getOffY() > 0)   //Check this later.
                     {
                         setPos(getX(), getY(), getOffX(), 0);
+                        curspeed = 6;
+                        setSpeed(6);
                     }
                 }
                 else
                 {
+
+                    if (gravityfallWait.wait(5) && getSpeed() <= 30)
+                    {
+                        curspeed++;
+                    }
+                    speed = curspeed;
                     setPos(getX(), getY(), getOffX(), getOffY() + speed + 1);
                 }
             }

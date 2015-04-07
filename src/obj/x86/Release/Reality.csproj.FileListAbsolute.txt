@@ -22,3 +22,4 @@ C:\Users\Zambonie\Documents\Projects\Reality\Reality-master\src\bin\Windows\Rele
 C:\Users\Zambonie\Documents\Projects\Reality\Reality-master\src\bin\Windows\Release\SharpDX.Direct3D9.xml
 C:\Users\Zambonie\Documents\Projects\Reality\Reality-master\src\obj\x86\Release\Reality.exe
 C:\Users\Zambonie\Documents\Projects\Reality\Reality-master\src\obj\x86\Release\Reality.pdb
+C:\Users\Zambonie\Documents\Projects\Reality\Reality-master\src\obj\x86\Release\Reality.csprojResolveAssemblyReference.cache

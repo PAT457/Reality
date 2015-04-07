@@ -1,14 +1,16 @@
-﻿using System;
+﻿using Reality.Content.ItemEntityNS;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 //using Reality.Content.Item;
 
-namespace Reality.Content.Item
+namespace Reality.Content.ItemNS
 {
     class ItemStack
     {
         private Item item;
+        private ItemEntity itement;
         private Block.Block block;
         private int total;
         private int maxStack;
@@ -22,6 +24,18 @@ namespace Reality.Content.Item
                 totalStack = maxStack;
             }
             item = itemObj;
+            total = totalStack;
+            type = false;
+        }
+
+        public ItemStack(ItemEntity itemObj, int totalStack)
+        {
+            maxStack = itemObj.getMaxStack();
+            if (totalStack < maxStack)
+            {
+                totalStack = maxStack;
+            }
+            itement = itemObj;
             total = totalStack;
             type = false;
         }
@@ -52,6 +66,12 @@ namespace Reality.Content.Item
         {
             if (type) return block;
             else return item;
+        }
+
+        public int getID()
+        {
+            if (type) return block.getID();
+            else return item.getID();
         }
 
         public bool getType()

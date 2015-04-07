@@ -11,7 +11,7 @@ namespace Reality.Content.Generation
         public static WorldGen genPlain()
         {
             Random random = new Random();
-            WorldGen world = new WorldGen(500, 500);
+            WorldGen world = new WorldGen(1000, 1000);
             int y = 250;
             for (int i = 0; i < 500; i++)
             {
@@ -67,7 +67,7 @@ namespace Reality.Content.Generation
             }
 
 
-            int[,] bg = new int[500,500];
+            int[,] bg = new int[1000,1000];
 
             Array.Copy(world.getWorld(), bg, world.getWorld().Length);
 
