@@ -108,9 +108,9 @@ namespace Reality
         {
             //Graphic Int.
             Console.WriteLine("{0}    {1}", GraphicsDevice.Viewport.Width, GraphicsDevice.DisplayMode.Height);
-            this.graphics.PreferredBackBufferWidth = screenW;
-            this.graphics.PreferredBackBufferHeight = screenH;
-            this.Window.AllowUserResizing = true;
+			this.Window.AllowUserResizing = false;
+			this.graphics.PreferredBackBufferWidth = screenW;
+			this.graphics.PreferredBackBufferHeight = screenH;
             this.IsMouseVisible = true;
             renderDistanceX = screenW / 24 + 2;
             renderDistanceY = screenH / 24 + 1;
@@ -518,6 +518,13 @@ namespace Reality
         {
             player = loadPlayer.getPlayer();
             GraphicsDevice.Clear(Color.Beige);
+
+
+			renderDistanceX = this.graphics.PreferredBackBufferWidth / 24 + 2;
+			renderDistanceY = this.graphics.PreferredBackBufferHeight / 24 + 1;
+
+			screenW = this.graphics.PreferredBackBufferWidth;
+			screenH = this.graphics.PreferredBackBufferHeight;
 
             //float frameRate = 1 / (float)gameTime.ElapsedGameTime.TotalSeconds; FPS Counter. Will use later.
             //Console.WriteLine(frameRate);
